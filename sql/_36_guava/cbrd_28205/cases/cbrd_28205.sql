@@ -17,6 +17,9 @@
  *  JOIN ON, when the rest of its ON would move to a LEFT OUTER or ANTI JOIN ON or has no ON to move to, or
  *  when a primary key constant term has no child term with the same constant that filters rows or is in the
  *  same ON. Before, these gave wrong results, an error or a DELETE of rows the ON rejects.
+ *  The primary key table is also kept when its primary key index is shared in a class hierarchy (an inherited
+ *  primary key, or a subclass of the primary key table): the foreign key check accepts a key of any class in
+ *  the hierarchy, but the primary key table scan reads its own rows only.
  *
  *  The expected result of each query is in its evaluate line. It is the result of the same query with the
  *  preceding join wrapped in a derived table that is not merged.
@@ -69,9 +72,14 @@
  *                WHERE: before a LEFT JOIN, last
  *    Case 84:    the join term in an ANTI JOIN ON, kept
  *    Case 85:    b.id = 1 and a.bid = 1 in the same LEFT JOIN ON, eliminated
+ *    Case 86-89: the primary key index is shared in a class hierarchy, kept: inherited primary key, with a
+ *                LEFT JOIN after it, primary key table with a subclass, ALL with a subclass
+ *    Case 90-92: eliminated: superclass without the primary key, foreign key inherited by the child,
+ *                partitioned primary key table
  */
 
 drop table if exists t28205_m, t28205_n, t28205_o, t28205_x, t28205_y, t28205_z, t28205_a, t28205_b, t28205_c, t28205_d, t28205_bi;
+drop table if exists t28205_hf, t28205_hc, t28205_hp, t28205_hq, t28205_hs, t28205_hd, t28205_hu, t28205_ht, t28205_he, t28205_hl, t28205_hn, t28205_pc, t28205_pp;
 drop table if exists t28205_a2, t28205_km, t28205_ka, t28205_kan, t28205_kan2, t28205_kc2, t28205_kb, t28205_kb2, t28205_kc, t28205_kd;
 
 create table t28205_m (a int);
@@ -116,6 +124,31 @@ create table t28205_kb2 (id int primary key);
 create table t28205_km (id int, bid int, b2id int not null, foreign key (bid) references t28205_kb (id), foreign key (b2id) references t28205_kb2 (id));
 insert into t28205_kb2 values (1), (2), (8);
 insert into t28205_km values (1, 1, 1), (2, 2, 2), (3, null, 1), (4, 3, 2), (5, null, 2);
+create table t28205_hs (id int primary key, v int);
+create table t28205_hp under t28205_hs (w int);
+create table t28205_hq under t28205_hs (z int);
+create table t28205_hc (id int, pid int, foreign key (pid) references t28205_hp (id));
+insert into t28205_hs values (1, 1);
+insert into t28205_hp values (2, 2, 2);
+insert into t28205_hq values (3, 3, 3);
+insert into t28205_hc values (1, 1), (2, 2), (3, 3), (4, null);
+create table t28205_ht (id int primary key, v int);
+create table t28205_hu under t28205_ht (w int);
+create table t28205_hd (id int, pid int, foreign key (pid) references t28205_ht (id));
+insert into t28205_ht values (1, 1);
+insert into t28205_hu values (2, 2, 2);
+insert into t28205_hd values (1, 1), (2, 2), (4, null);
+create table t28205_hn (v int);
+create table t28205_hl under t28205_hn (id int primary key);
+create table t28205_he (id int, pid int, foreign key (pid) references t28205_hl (id));
+insert into t28205_hl values (1, 1);
+insert into t28205_he values (1, 1), (4, null);
+create table t28205_hf under t28205_ka (w int);
+insert into t28205_hf values (7, 1, 0), (8, null, 0);
+create table t28205_pp (id int primary key, v int) partition by hash (id) partitions 3;
+create table t28205_pc (id int, pid int, foreign key (pid) references t28205_pp (id));
+insert into t28205_pp values (1, 1), (2, 2), (3, 3);
+insert into t28205_pc values (1, 1), (2, 2), (3, 3), (4, null);
 
 
 evaluate 'Case 1: issue form, RIGHT JOIN ON n.b > 0; expected (NULL, NULL, 1)';
@@ -398,5 +431,30 @@ evaluate 'Case 85: b.id = 1 and a.bid = 1 in the same LEFT JOIN ON, eliminated; 
 --@queryplan
 select a.id, d.id from t28205_kan a inner join t28205_kb b on b.id = a.bid left join t28205_kd d on d.v = a.id and b.id = 1 and a.bid = 1 order by 1, 2;
 
+evaluate 'Case 86: the primary key is inherited, values only in the superclass and a sibling, kept; expected (2)';
+select c.id from t28205_hc c, t28205_hp p where c.pid = p.id order by 1;
+
+evaluate 'Case 87: Case 86 with a LEFT JOIN after the primary key table, kept; expected (2, 2)';
+select c.id, d.id from t28205_hc c inner join t28205_hp p on p.id = c.pid left join t28205_kd d on d.v = c.id order by 1, 2;
+
+evaluate 'Case 88: the primary key table has a subclass, a value only in the subclass, kept; expected (1)';
+select c.id from t28205_hd c, t28205_ht p where c.pid = p.id order by 1;
+
+evaluate 'Case 89: Case 88 with ALL, kept; expected (1) (2)';
+select c.id from t28205_hd c, all t28205_ht p where c.pid = p.id order by 1;
+
+evaluate 'Case 90: the superclass has no primary key and the primary key table has no subclass, eliminated; expected (1)';
+--@queryplan
+select c.id from t28205_he c, t28205_hl p where c.pid = p.id order by 1;
+
+evaluate 'Case 91: the child inherits the foreign key, eliminated; expected (7)';
+--@queryplan
+select c.id from t28205_hf c, t28205_kb p where c.bid = p.id order by 1;
+
+evaluate 'Case 92: partitioned primary key table, eliminated; expected (1) (2) (3)';
+--@queryplan
+select c.id from t28205_pc c, t28205_pp p where c.pid = p.id order by 1;
+
 drop table if exists t28205_m, t28205_n, t28205_o, t28205_x, t28205_y, t28205_z, t28205_a, t28205_b, t28205_c, t28205_d, t28205_bi;
+drop table if exists t28205_hf, t28205_hc, t28205_hp, t28205_hq, t28205_hs, t28205_hd, t28205_hu, t28205_ht, t28205_he, t28205_hl, t28205_hn, t28205_pc, t28205_pp;
 drop table if exists t28205_a2, t28205_km, t28205_ka, t28205_kan, t28205_kan2, t28205_kc2, t28205_kb, t28205_kb2, t28205_kc, t28205_kd;
