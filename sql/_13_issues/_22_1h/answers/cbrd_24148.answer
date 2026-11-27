@@ -17,17 +17,17 @@ Query Plan:
   SORT (order by)
     TABLE SCAN (dba.tbl_hls)
 
-  rewritten query: (select /*+ NO_PARALLEL_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] order by ?, ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? )
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c, [dba.tbl_hls].d from [dba.tbl_hls] [dba.tbl_hls] order by ?, ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? )
 
   TABLE SCAN (dba.tbl_hls)
 
-  rewritten query: (select /*+ NO_PARALLEL_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] where (inst_num()> ?:?  and inst_num()<= ?:? ))
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c, [dba.tbl_hls].d from [dba.tbl_hls] [dba.tbl_hls] where (inst_num()> ?:?  and inst_num()<= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ count(*) from (select /*+ NO_PARALLEL_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] order by ?, ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? ) a (a, b, c), (select /*+ NO_PARALLEL_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] where (inst_num()> ?:?  and inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
+  rewritten query: select /*+ ORDERED */ count(*) from (select /*+ NO_PARALLEL_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c, [dba.tbl_hls].d from [dba.tbl_hls] [dba.tbl_hls] order by ?, ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? ) a (a, b, c, d), (select /*+ NO_PARALLEL_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c, [dba.tbl_hls].d from [dba.tbl_hls] [dba.tbl_hls] where (inst_num()> ?:?  and inst_num()<= ?:? )) b (a, b, c, d) where a.a=b.a and a.b=b.b and a.c=b.c and a.d=b.d
 
 
 Trace Statistics:

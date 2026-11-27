@@ -15,14 +15,18 @@ BEGIN
     dbms_output.put_line('id: ' || r_id || ' name: ' || r_name);
 END;
 
--- session variables : bug
--- bug
+-- error: a session variable for an OUT parameter is rejected (CBRD-25140)
 set @p1 = 0;
 set @p2 = '';
 call t('name1',@p1, @p2);
 select @p1, @p2 from dual;
 
 deallocate variable @p1, @p2;
+
+-- host variables take the values
+select 0, '' into :p1, :p2 from dual;
+call t('name1', :p1, :p2);
+select :p1, :p2 from dual;
 
 drop table plcsql_tbl;
 drop procedure t;

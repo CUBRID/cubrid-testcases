@@ -65,30 +65,30 @@ id    col1    col2
 5     2013-12-10 08:30:00.0 Europe/Bucharest EET     2013-12-10 08:30:00.0 Europe/Riga EET     
 
 Query plan:
-temp(order by)
-    subplan: iscan
-                 class: tz_test node[?]
-                 index: idx? term[?]
-                 cost:  ? card ?
+iscan
+    class: tz_test node[?]
+    index: idx? 
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================
 id    col1    col2    
 
 Query plan:
-temp(order by)
-    subplan: iscan
-                 class: tz_test node[?]
-                 index: idx? term[?]
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: tz_test node[?]
+    index: idx? 
+    filtr: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where (tz_test.col?> ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================
@@ -115,30 +115,30 @@ id    col1    col2
 6     2011-05-12 16:12:56.0 +04:00     2011-05-12 10:12:56.0 America/Noronha -02     
 
 Query plan:
-temp(order by)
-    subplan: iscan
-                 class: tz_test node[?]
-                 index: idx? term[?]
-                 cost:  ? card ?
+iscan
+    class: tz_test node[?]
+    index: idx? 
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?
+/* ---> skip ORDER BY */
 ===================================================
 id    col2    col1    
 2     2011-05-12 21:12:56.0 Asia/Seoul KST     2011-05-12 16:12:56.0 +04:00     
 6     2011-05-12 10:12:56.0 America/Noronha -02     2011-05-12 16:12:56.0 +04:00     
 
 Query plan:
-temp(order by)
-    subplan: iscan
-                 class: tz_test node[?]
-                 index: idx? term[?]
-                 cost:  ? card ?
+iscan
+    class: tz_test node[?]
+    index: idx? 
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================
@@ -147,16 +147,16 @@ id    col1    col2
 6     2011-05-12 20:12:56.0 Australia/Perth AWST     2011-05-12 10:12:56.0 America/Noronha -02     
 
 Query plan:
-temp(order by)
-    subplan: iscan
-                 class: tz_test node[?]
-                 index: idx? term[?]
-                 filtr: term[?]
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: tz_test node[?]
+    index: idx? 
+    filtr: term[?]
+    sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where (tz_test.col?< ?:? ) and (tz_test.col?> ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 id    col1    col2    
 1     2013-12-10 14:30:00.0 Australia/Perth AWST     2013-12-10 15:30:00.0 Asia/Seoul KST     
@@ -173,15 +173,15 @@ id    col1    col2
 14     1994-07-01 07:59:59.0 Australia/Perth AWST     1994-07-01 02:59:59.0 Europe/Bucharest EEST     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: tz_test node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: tz_test node[?]
+    index: idx? 
+    sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= cast(tz_test.col? as timestamptz) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 a    b    
 1992-07-10 08:00:00.0 Australia/Perth AWST     02:00:00 AM 07/10/1992 +02:00     

@@ -1,0 +1,683 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+200000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+200000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: an ascending index read backwards for GROUP BY DESC, covered and not covered; result = no_parallel_scan     
+
+===================================================
+g    count(*)    
+34     5714     
+33     5714     
+32     5714     
+31     5714     
+30     5714     
+29     5714     
+28     5714     
+27     5714     
+26     5714     
+25     5714     
+24     5714     
+23     5714     
+22     5714     
+21     5714     
+20     5714     
+19     5714     
+18     5714     
+17     5714     
+16     5714     
+15     5714     
+14     5714     
+13     5714     
+12     5714     
+11     5714     
+10     5715     
+9     5715     
+8     5715     
+7     5715     
+6     5715     
+5     5715     
+4     5715     
+3     5715     
+2     5715     
+1     5715     
+0     5714     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_main.i_g) (key range: ([dba.t_main].g>= ?:? ), covered: true, desc_index: true)
+  group by nosort: true
+
+  rewritten query: select [dba.t_main].g, count(*) from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:? ) group by [dba.t_main].g desc  using index [dba.t_main].i_g(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_main.i_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+g    count(*)    
+34     5714     
+33     5714     
+32     5714     
+31     5714     
+30     5714     
+29     5714     
+28     5714     
+27     5714     
+26     5714     
+25     5714     
+24     5714     
+23     5714     
+22     5714     
+21     5714     
+20     5714     
+19     5714     
+18     5714     
+17     5714     
+16     5714     
+15     5714     
+14     5714     
+13     5714     
+12     5714     
+11     5714     
+10     5715     
+9     5715     
+8     5715     
+7     5715     
+6     5715     
+5     5715     
+4     5715     
+3     5715     
+2     5715     
+1     5715     
+0     5714     
+
+===================================================
+g    count(*)    sum(v)    max(id)    round(avg(d), 6)    
+34     5714     2860977     199989     6.856018     
+33     5714     2849979     199988     6.856243     
+32     5714     2865981     199987     6.856468     
+31     5714     2854983     199986     6.856693     
+30     5714     2843985     199985     6.856918     
+29     5714     2859987     199984     6.857143     
+28     5714     2848989     199983     6.857368     
+27     5714     2865991     199982     6.857593     
+26     5714     2853993     199981     6.857818     
+25     5714     2842995     199980     6.858043     
+24     5714     2859997     199979     6.858268     
+23     5714     2847999     199978     6.856068     
+22     5714     2866001     199977     6.856293     
+21     5714     2854003     199976     6.856518     
+20     5714     2842005     199975     6.856743     
+19     5714     2860007     199974     6.856968     
+18     5714     2848009     199973     6.857193     
+17     5714     2865011     199972     6.857418     
+16     5714     2854013     199971     6.857643     
+15     5714     2842015     199970     6.855443     
+14     5714     2859017     199969     6.855668     
+13     5714     2848019     199968     6.855893     
+12     5714     2864021     199967     6.856118     
+11     5714     2853023     199966     6.856343     
+10     5715     2842025     200000     6.857443     
+9     5715     2859020     199999     6.857643     
+8     5715     2848015     199998     6.857843     
+7     5715     2866010     199997     6.855618     
+6     5715     2854005     199996     6.855818     
+5     5715     2843000     199995     6.856018     
+4     5715     2860995     199994     6.856218     
+3     5715     2848990     199993     6.856418     
+2     5715     2866985     199992     6.856618     
+1     5715     2855980     199991     6.856818     
+0     5714     2843975     199990     6.858218     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_main.i_g) (key range: ([dba.t_main].g>= ?:? ), desc_index: true)
+  group by nosort: true
+
+  rewritten query: select [dba.t_main].g, count(*), sum([dba.t_main].v), max([dba.t_main].id),  round(avg([dba.t_main].d), ?) from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:? ) group by [dba.t_main].g desc  using index [dba.t_main].i_g(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_main.i_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+g    count(*)    sum(v)    max(id)    round(avg(d), 6)    
+34     5714     2860977     199989     6.856018     
+33     5714     2849979     199988     6.856243     
+32     5714     2865981     199987     6.856468     
+31     5714     2854983     199986     6.856693     
+30     5714     2843985     199985     6.856918     
+29     5714     2859987     199984     6.857143     
+28     5714     2848989     199983     6.857368     
+27     5714     2865991     199982     6.857593     
+26     5714     2853993     199981     6.857818     
+25     5714     2842995     199980     6.858043     
+24     5714     2859997     199979     6.858268     
+23     5714     2847999     199978     6.856068     
+22     5714     2866001     199977     6.856293     
+21     5714     2854003     199976     6.856518     
+20     5714     2842005     199975     6.856743     
+19     5714     2860007     199974     6.856968     
+18     5714     2848009     199973     6.857193     
+17     5714     2865011     199972     6.857418     
+16     5714     2854013     199971     6.857643     
+15     5714     2842015     199970     6.855443     
+14     5714     2859017     199969     6.855668     
+13     5714     2848019     199968     6.855893     
+12     5714     2864021     199967     6.856118     
+11     5714     2853023     199966     6.856343     
+10     5715     2842025     200000     6.857443     
+9     5715     2859020     199999     6.857643     
+8     5715     2848015     199998     6.857843     
+7     5715     2866010     199997     6.855618     
+6     5715     2854005     199996     6.855818     
+5     5715     2843000     199995     6.856018     
+4     5715     2860995     199994     6.856218     
+3     5715     2848990     199993     6.856418     
+2     5715     2866985     199992     6.856618     
+1     5715     2855980     199991     6.856818     
+0     5714     2843975     199990     6.858218     
+
+===================================================
+    
+Case 2: two GROUP BY columns DESC over an ascending two-column index, the group order checked; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(n)    sum(r*(g*1000+v))    
+7000     200000     285880934500     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_main.i_gv) (key range: ([dba.t_main].g>= ?:? ), covered: true, desc_index: true)
+  group by nosort: true
+
+  rewritten query: (select [dba.t_main].g, [dba.t_main].v, count(*) from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:? ) group by [dba.t_main].g desc , [dba.t_main].v desc  using index [dba.t_main].i_gv(+))
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.n), sum((rownum)* cast((x.g*?+x.v) as bigint)) from (select [dba.t_main].g, [dba.t_main].v, count(*) as [n] from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:? ) group by [dba.t_main].g desc , [dba.t_main].v desc  using index [dba.t_main].i_gv(+)) x (g, v, n)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_main.i_gv), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+        GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(n)    sum(r*(g*1000+v))    
+7000     200000     285880934500     
+
+===================================================
+    
+Case 3: a descending index read forwards for GROUP BY DESC, and read backwards for GROUP BY ASC; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(n)    sum(r*(a*1000+b))    
+7000     200000     285880934500     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_dsc.i_dd) (key range: ([dba.t_dsc].a>= ?:? ), covered: true)
+  group by nosort: true
+
+  rewritten query: (select [dba.t_dsc].a, [dba.t_dsc].b, count(*) from [dba.t_dsc] [dba.t_dsc] where ([dba.t_dsc].a>= ?:? ) group by [dba.t_dsc].a desc , [dba.t_dsc].b desc  using index [dba.t_dsc].i_dd(+))
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.n), sum((rownum)* cast((x.a*?+x.b) as bigint)) from (select [dba.t_dsc].a, [dba.t_dsc].b, count(*) as [n] from [dba.t_dsc] [dba.t_dsc] where ([dba.t_dsc].a>= ?:? ) group by [dba.t_dsc].a desc , [dba.t_dsc].b desc  using index [dba.t_dsc].i_dd(+)) x (a, b, n)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_dsc.i_dd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+        GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(n)    sum(r*(a*1000+b))    
+7000     200000     285880934500     
+
+===================================================
+count(*)    sum(n)    sum(r*(a*1000+b))    
+7000     200000     571717062000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_dsc.i_dd) (key range: ([dba.t_dsc].a>= ?:? ), covered: true, desc_index: true)
+  group by nosort: true
+
+  rewritten query: (select [dba.t_dsc].a, [dba.t_dsc].b, count(*) from [dba.t_dsc] [dba.t_dsc] where ([dba.t_dsc].a>= ?:? ) group by [dba.t_dsc].a, [dba.t_dsc].b using index [dba.t_dsc].i_dd(+))
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.n), sum((rownum)* cast((x.a*?+x.b) as bigint)) from (select [dba.t_dsc].a, [dba.t_dsc].b, count(*) as [n] from [dba.t_dsc] [dba.t_dsc] where ([dba.t_dsc].a>= ?:? ) group by [dba.t_dsc].a, [dba.t_dsc].b using index [dba.t_dsc].i_dd(+)) x (a, b, n)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_dsc.i_dd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+        GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(n)    sum(r*(a*1000+b))    
+7000     200000     571717062000     
+
+===================================================
+    
+Case 4: an index of mixed directions read backwards, GROUP BY a DESC, b; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(n)    sum(r*(a*1000+b))    
+7000     200000     286114262000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_dsc.i_ad) (key range: ([dba.t_dsc].a>= ?:? ), covered: true, desc_index: true)
+  group by nosort: true
+
+  rewritten query: (select [dba.t_dsc].a, [dba.t_dsc].b, count(*) from [dba.t_dsc] [dba.t_dsc] where ([dba.t_dsc].a>= ?:? ) group by [dba.t_dsc].a desc , [dba.t_dsc].b using index [dba.t_dsc].i_ad(+))
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.n), sum((rownum)* cast((x.a*?+x.b) as bigint)) from (select [dba.t_dsc].a, [dba.t_dsc].b, count(*) as [n] from [dba.t_dsc] [dba.t_dsc] where ([dba.t_dsc].a>= ?:? ) group by [dba.t_dsc].a desc , [dba.t_dsc].b using index [dba.t_dsc].i_ad(+)) x (a, b, n)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_dsc.i_ad), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+        GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(n)    sum(r*(a*1000+b))    
+7000     200000     286114262000     
+
+===================================================
+    
+Case 5: GROUP BY DESC over an IN list and over two ranges; result = no_parallel_scan     
+
+===================================================
+g    count(*)    sum(v)    
+34     5714     2860977     
+33     5714     2849979     
+31     5714     2854983     
+30     5714     2843985     
+28     5714     2848989     
+27     5714     2865991     
+26     5714     2853993     
+25     5714     2842995     
+23     5714     2847999     
+22     5714     2866001     
+20     5714     2842005     
+19     5714     2860007     
+17     5714     2865011     
+15     5714     2842015     
+14     5714     2859017     
+12     5714     2864021     
+11     5714     2853023     
+9     5715     2859020     
+8     5715     2848015     
+6     5715     2854005     
+5     5715     2843000     
+4     5715     2860995     
+3     5715     2848990     
+2     5715     2866985     
+1     5715     2855980     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_main.i_g) (key range: (([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? )), desc_index: true)
+  group by nosort: true
+
+  rewritten query: select [dba.t_main].g, count(*), sum([dba.t_main].v) from [dba.t_main] [dba.t_main] where (([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? ) or ([dba.t_main].g= ?:? )) group by [dba.t_main].g desc  using index [dba.t_main].i_g(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_main.i_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+g    count(*)    sum(v)    
+34     5714     2860977     
+33     5714     2849979     
+31     5714     2854983     
+30     5714     2843985     
+28     5714     2848989     
+27     5714     2865991     
+26     5714     2853993     
+25     5714     2842995     
+23     5714     2847999     
+22     5714     2866001     
+20     5714     2842005     
+19     5714     2860007     
+17     5714     2865011     
+15     5714     2842015     
+14     5714     2859017     
+12     5714     2864021     
+11     5714     2853023     
+9     5715     2859020     
+8     5715     2848015     
+6     5715     2854005     
+5     5715     2843000     
+4     5715     2860995     
+3     5715     2848990     
+2     5715     2866985     
+1     5715     2855980     
+
+===================================================
+g    count(*)    sum(v)    
+33     5714     2849979     
+32     5714     2865981     
+31     5714     2854983     
+30     5714     2843985     
+29     5714     2859987     
+28     5714     2848989     
+27     5714     2865991     
+26     5714     2853993     
+25     5714     2842995     
+24     5714     2859997     
+23     5714     2847999     
+22     5714     2866001     
+21     5714     2854003     
+20     5714     2842005     
+12     5714     2864021     
+11     5714     2853023     
+10     5715     2842025     
+9     5715     2859020     
+8     5715     2848015     
+7     5715     2866010     
+6     5715     2854005     
+5     5715     2843000     
+4     5715     2860995     
+3     5715     2848990     
+2     5715     2866985     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_main.i_g) (key range: (([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ) or ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? )), desc_index: true)
+  group by nosort: true
+
+  rewritten query: select [dba.t_main].g, count(*), sum([dba.t_main].v) from [dba.t_main] [dba.t_main] where (([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ) or ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? )) group by [dba.t_main].g desc  using index [dba.t_main].i_g(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_main.i_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+g    count(*)    sum(v)    
+33     5714     2849979     
+32     5714     2865981     
+31     5714     2854983     
+30     5714     2843985     
+29     5714     2859987     
+28     5714     2848989     
+27     5714     2865991     
+26     5714     2853993     
+25     5714     2842995     
+24     5714     2859997     
+23     5714     2847999     
+22     5714     2866001     
+21     5714     2854003     
+20     5714     2842005     
+12     5714     2864021     
+11     5714     2853023     
+10     5715     2842025     
+9     5715     2859020     
+8     5715     2848015     
+7     5715     2866010     
+6     5715     2854005     
+5     5715     2843000     
+4     5715     2860995     
+3     5715     2848990     
+2     5715     2866985     
+
+===================================================
+    
+Case 6: NULL group keys with GROUP BY DESC; result = no_parallel_scan     
+
+===================================================
+h    count(*)    sum(g)    
+39     4445     84425     
+38     4444     79957     
+37     4444     75508     
+36     4444     71094     
+35     4445     66670     
+34     4445     84435     
+33     4444     79977     
+32     4444     75563     
+31     4445     71140     
+30     4445     66680     
+29     4444     84446     
+28     4444     80032     
+27     4444     75583     
+26     4445     71150     
+25     4445     66690     
+24     4444     84466     
+23     4444     80017     
+22     4445     75585     
+21     4445     71125     
+20     4444     66675     
+19     4444     84451     
+18     4444     80002     
+17     4445     75560     
+16     4445     71135     
+15     4444     66660     
+14     4444     84436     
+13     4445     79995     
+12     4445     75570     
+11     4444     71094     
+10     4444     66645     
+9     4444     84421     
+8     4445     80005     
+7     4445     75545     
+6     4444     71079     
+5     4444     66630     
+4     4445     84440     
+3     4445     79980     
+2     4444     75513     
+1     4444     71064     
+0     4445     66660     
+null     22222     377782     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_main.i_hg) (covered: true, desc_index: true)
+  group by nosort: true
+
+  rewritten query: select [dba.t_main].h, count(*), sum([dba.t_main].g) from [dba.t_main] [dba.t_main] group by [dba.t_main].h desc  using index [dba.t_main].i_hg(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_main.i_hg), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+h    count(*)    sum(g)    
+39     4445     84425     
+38     4444     79957     
+37     4444     75508     
+36     4444     71094     
+35     4445     66670     
+34     4445     84435     
+33     4444     79977     
+32     4444     75563     
+31     4445     71140     
+30     4445     66680     
+29     4444     84446     
+28     4444     80032     
+27     4444     75583     
+26     4445     71150     
+25     4445     66690     
+24     4444     84466     
+23     4444     80017     
+22     4445     75585     
+21     4445     71125     
+20     4444     66675     
+19     4444     84451     
+18     4444     80002     
+17     4445     75560     
+16     4445     71135     
+15     4444     66660     
+14     4444     84436     
+13     4445     79995     
+12     4445     75570     
+11     4444     71094     
+10     4444     66645     
+9     4444     84421     
+8     4445     80005     
+7     4445     75545     
+6     4444     71079     
+5     4444     66630     
+4     4445     84440     
+3     4445     79980     
+2     4444     75513     
+1     4444     71064     
+0     4445     66660     
+null     22222     377782     
+
+===================================================
+count(*)    sum(n)    sum(r*(nvl(h, 99)*100+g))    
+315     200000     154686000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_main.i_hg) (covered: true, desc_index: true)
+  group by nosort: true
+
+  rewritten query: (select [dba.t_main].h, [dba.t_main].g, count(*) from [dba.t_main] [dba.t_main] group by [dba.t_main].h desc , [dba.t_main].g desc  using index [dba.t_main].i_hg(+))
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.n), sum((rownum)* cast((nvl(x.h, ?)*?+x.g) as bigint)) from (select [dba.t_main].h, [dba.t_main].g, count(*) as [n] from [dba.t_main] [dba.t_main] group by [dba.t_main].h desc , [dba.t_main].g desc  using index [dba.t_main].i_hg(+)) x (h, g, n)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_main.i_hg), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+        GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(n)    sum(r*(nvl(h, 99)*100+g))    
+315     200000     154686000     
+
+===================================================
+    
+Case 7: ORDER BY skip with a DESC key stays serial; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(r*(g*1000+v))    
+200000     233310881986875     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (y.i_gv) (key range: (y.g>= ?:? ), covered: true, desc_index: true)
+  skip order by: true
+
+  rewritten query: (select (orderby_num()), y.g, y.v from [dba.t_main] y where (y.g>= ?:? ) using index y.i_gv(+) order by ? desc , ? desc )
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.r* cast((x.g*?+x.v) as bigint)) from (select (orderby_num()), y.g, y.v from [dba.t_main] y where (y.g>= ?:? ) using index y.i_gv(+) order by ? desc , ? desc ) x (r, g, v)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_main.i_gv), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(r*(g*1000+v))    
+200000     233310881986875     
+
+===================================================
+0

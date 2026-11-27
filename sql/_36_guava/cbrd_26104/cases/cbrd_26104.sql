@@ -1,4 +1,4 @@
--- Verification for CBRD-26104, CBRD-26200, CBRD-26206, CBRD-26178
+-- Verification for CBRD-26104, CBRD-26200, CBRD-26206, CBRD-26178, CBRD-26670
 -- Check if uncorrelated subqueries(inline view) are executed in parallel.
 -- Check if queries are executed in the usual way when parallel execution is not possible.
 -- NO_PARALLEL_SUBQUERY hint is used to disable parallel execution of uncorrelated subqueries.
@@ -96,7 +96,7 @@ cte_b as (select /*+ materialize */ sp(i) from tbl_b)
 select /*+ recompile */ count(*) from cte_a, cte_b;
 show trace;
 
-evaluate 'stored procedure excluded case - should work';
+evaluate 'stored procedure excluded case - the CTEs run one by one (CBRD-28126) - should not work';
 with cte_a as (select /*+ materialize */ * from tbl_a),
 cte_b as (select /*+ materialize */ * from tbl_b)
 select /*+ recompile */ count(*) from cte_a, cte_b;
@@ -114,7 +114,7 @@ cte_b as (select /*+ materialize */ owner.name from _db_class where class_name =
 select /*+ recompile */ count(*) from cte_a, cte_b;
 show trace;
 
-evaluate 'path expression not used - should work';
+evaluate 'path expression not used - the CTEs run one by one (CBRD-28126) - should not work';
 with cte_a as (select /*+ materialize */ owner from _db_class where class_name = 'tbl_a'),
 cte_b as (select /*+ materialize */ owner from _db_class where class_name = 'tbl_b')
 select /*+ recompile */ count(*) from cte_a, cte_b;
@@ -205,3 +205,47 @@ where (select ca from ttd) > 0 and tta.ca = ttb.ca and ttb.ca = ttc.ca;
 show trace;
 
 drop table if exists tta, ttb, ttc, ttd;
+
+-- CBRD-26670: a session variable evaluated inside an analytic (window) function
+-- slips past the guard that blocks session-variable evaluation in parallel
+-- uncorrelated subqueries -> segmentation fault before the fix. Cover the
+-- session variable in each position the detection must recurse into (wrapping
+-- the analytic, the analytic argument, PARTITION BY, window ORDER BY), plus a
+-- NO_PARALLEL_SUBQUERY (serial) control. All must run without crashing.
+drop table if exists zt;
+create table zt (a int, b int);
+-- multiple partitions (a=1,2,3) with several rows each so the analytic actually
+-- forms partition boundaries and slides frames (greptile P2: single-row data)
+insert into zt values (1, 1), (1, 2), (1, 3), (2, 4), (2, 5), (3, 6);
+
+evaluate 'CBRD-26670: session var wrapping an analytic function (original repro) - should not crash';
+(select @v:=count(b) over (partition by a+a order by b+b) from zt)
+union
+(select @v:=count(b) over (partition by a+a order by b+b) from zt);
+show trace;
+
+evaluate 'CBRD-26670: session var inside the analytic argument - should not crash';
+(select count(@v:=b) over (partition by a order by b) from zt)
+union
+(select count(@v:=b) over (partition by a order by b) from zt);
+show trace;
+
+evaluate 'CBRD-26670: session var in the analytic PARTITION BY - should not crash';
+(select count(b) over (partition by @v:=a order by b) from zt)
+union
+(select count(b) over (partition by @v:=a order by b) from zt);
+show trace;
+
+evaluate 'CBRD-26670: session var in the analytic window ORDER BY - should not crash';
+(select count(b) over (partition by a order by @v:=b) from zt)
+union
+(select count(b) over (partition by a order by @v:=b) from zt);
+show trace;
+
+evaluate 'CBRD-26670: NO_PARALLEL_SUBQUERY (serial) control - should not crash';
+(select /*+ NO_PARALLEL_SUBQUERY */ @v:=count(b) over (partition by a+a order by b+b) from zt)
+union
+(select /*+ NO_PARALLEL_SUBQUERY */ @v:=count(b) over (partition by a+a order by b+b) from zt);
+show trace;
+
+drop table if exists zt;

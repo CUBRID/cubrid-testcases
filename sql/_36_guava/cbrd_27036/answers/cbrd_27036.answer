@@ -1,0 +1,124 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+110
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (a.i_ns_v) (key range: a.v= ?:? )
+    INDEX SCAN (b.pk_sm_id) (key range: a.id=b.id, covered: true)
+
+  rewritten query: select count(*) from [dba.ns] a, [dba.sm] b where a.id=b.id and a.v= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ns.i_ns_v), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.sm.pk_sm_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+count(*)    
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (b)
+    INDEX SCAN (a.pk_ns_id) (key range: a.id=b.id)
+
+  rewritten query: select count(*) from [dba.ns] a, [dba.sm] b where a.v like  ?:?  and a.id=b.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.sm), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ns.pk_ns_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (b)
+    INDEX SCAN (a.pk_ns_id) (key range: a.id=b.id)
+
+  rewritten query: select count(*) from [dba.ns] a, [dba.sm] b where a.v like  ?:?  and (a.v>= ?:?  and a.v< ?:? ) and a.id=b.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.sm), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ns.pk_ns_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (b)
+    INDEX SCAN (a.pk_ns_id) (key range: a.id=b.id)
+
+  rewritten query: select count(*) from [dba.ns] a, [dba.sm] b where a.v like  ?:?  and (a.v>= ?:?  and a.v< ?:? ) and a.id=b.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.sm), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ns.pk_ns_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (b)
+    INDEX SCAN (a.pk_ns_id) (key range: a.id=b.id)
+
+  rewritten query: select count(*) from [dba.ns] a, [dba.sm] b where a.v like  ?:?  and (a.v>= ?:?  and a.v< ?:? ) and a.id=b.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.sm), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ns.pk_ns_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0

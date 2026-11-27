@@ -48,8 +48,9 @@ C1: SELECT * FROM t1 a RIGHT JOIN t2 b ON a.id = b.id WHERE b.id >1 and b.id <7 
 MC: wait until C1 ready;
 C2: update (t1 left join t2 on t1.id = t2.id) left join t3 on t1.numid = t3.valueid set t1.col=t1.col+' a', t3.valueid=t1.numid where t1.id=2 and t1.numid=0 and t1.col is not null;
 MC: wait until C2 ready;
+/* CBRD-27034: C2's UPDATE leaves the parent key alone and gives its row lock back when it ends, so the child INSERT does not wait */
 C1: insert into t3(valueid, str) SELECT a.id, a.col+'xx' FROM t1 a RIGHT JOIN t2 b ON a.id = b.id WHERE b.id >1 and b.id <7;
-MC: wait until C1 blocked;
+MC: wait until C1 ready;
 C2: COMMIT;
 MC: wait until C1 ready;
 C2: SELECT * FROM t1 order by 1,2;
@@ -59,8 +60,9 @@ C1: COMMIT;
 MC: wait until C2 ready;
 C2: SELECT * FROM t3 order by 1,2;
 MC: wait until C2 ready;
+/* CBRD-27463: C2 still holds the locks of its DELETE that failed on the foreign key, but the foreign key check takes no lock on a committed parent row, so the child INSERT does not wait */
 C1: insert into t3(valueid, str) SELECT a.id, a.col+'xx' FROM t1 a RIGHT JOIN t2 b ON a.id = b.id WHERE b.id >1 and b.id <7;
-MC: wait until C1 blocked;
+MC: wait until C1 ready;
 C2: COMMIT;
 MC: wait until C1 ready;
 C2: COMMIT;

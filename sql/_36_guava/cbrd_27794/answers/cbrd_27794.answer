@@ -1,0 +1,683 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+    
+Case 1 : varchar unique + 0 = int     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ro o left outer join ru u on o.k= cast(u.code as double)+ cast(? as double)
+===================================================
+count(*)    
+3     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from ro o left outer join ru u on o.k= cast(u.code as double)+ cast(? as double)
+===================================================
+    
+Case 2 : varchar unique = int (implicit cast)     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ro o left outer join ru u on o.k= cast(u.code as double)
+===================================================
+count(*)    
+3     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from ro o left outer join ru u on o.k= cast(u.code as double)
+===================================================
+    
+Case 3 : varchar unique + 0 = constant     
+
+===================================================
+count(*)    
+4     
+
+Query plan:
+nl-join (left outer join)
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ro o left outer join ru u on  cast(u.code as double)+ cast(? as double)=?
+===================================================
+count(*)    
+4     
+
+Query plan:
+nl-join (left outer join)
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from ro o left outer join ru u on  cast(u.code as double)+ cast(? as double)=?
+===================================================
+    
+Case 4 : bigint unique = double     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: u node[?]
+               index: u_ru_b term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ro o left outer join ru u on u.b=o.kd
+===================================================
+count(*)    
+3     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: u node[?]
+               index: u_ru_b term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from ro o left outer join ru u on u.b=o.kd
+===================================================
+    
+Case 5 : double unique + 1 = double     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ro o left outer join ru u on o.kd?=u.d+ cast(? as double)
+===================================================
+count(*)    
+3     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from ro o left outer join ru u on o.kd?=u.d+ cast(? as double)
+===================================================
+    
+Case 6 : utf8_bin unique = utf8_en_ci     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ro o left outer join ru u on o.kci= cast(u.cs as varchar(?) collate utf?_en_ci)
+===================================================
+count(*)    
+3     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from ro o left outer join ru u on o.kci= cast(u.cs as varchar(?) collate utf?_en_ci)
+===================================================
+    
+Case 7 : utf8_bin unique || x = utf8_en_ci || x     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ro o left outer join ru u on  cast(u.cs|| cast('x' as varchar) as varchar collate utf?_en_ci)=o.kci|| cast('x' as varchar collate utf?_en_ci)
+===================================================
+count(*)    
+3     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from ro o left outer join ru u on  cast(u.cs|| cast('x' as varchar) as varchar collate utf?_en_ci)=o.kci|| cast('x' as varchar collate utf?_en_ci)
+===================================================
+    
+Case 8 : default collation unique = utf8_en_ci     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ro o left outer join ru u on o.kci= cast(u.cd as varchar(?) collate utf?_en_ci)
+===================================================
+count(*)    
+3     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from ro o left outer join ru u on o.kci= cast(u.cd as varchar(?) collate utf?_en_ci)
+===================================================
+    
+Case 9 : int unique + 1 = int     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+sscan
+    class: o node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from ro o
+===================================================
+count(*)    
+2     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from ro o left outer join ru u on o.k=u.n+?
+===================================================
+    
+Case 10 : varchar unique || x = varchar || x     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+sscan
+    class: o node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from ro o
+===================================================
+count(*)    
+2     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from ro o left outer join ru u on u.code|| cast('x' as varchar)=o.ks|| cast('x' as varchar)
+===================================================
+    
+Case 11 : numeric unique + 0 = numeric     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+sscan
+    class: o node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from ro o
+===================================================
+count(*)    
+2     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from ro o left outer join ru u on o.kn=u.nm+ cast(? as numeric)
+===================================================
+    
+Case 12 : int unique = varchar (the varchar side is cast)     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+sscan
+    class: o node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from ro o
+===================================================
+count(*)    
+2     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: u node[?]
+               index: u_ru_n term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from ro o left outer join ru u on u.n= cast(o.ks as double)
+===================================================
+    
+Case 13 : bigint unique = bigint     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+sscan
+    class: o node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from ro o
+===================================================
+count(*)    
+2     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: u node[?]
+               index: u_ru_b term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from ro o left outer join ru u on u.b=o.kb
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+    
+Case 14 : mod     
+
+===================================================
+count(*)    
+8     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and a.colb= mod(b.colb, ?)
+===================================================
+    
+Case 15 : numeric(38,38) unique + 38 digits = numeric(38,0) (rounded sum)     
+
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+1
+===================================================
+count(*)    
+2     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from rk o left outer join rn u on o.k=u.n+?
+===================================================
+count(*)    
+2     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from rk o left outer join rn u on o.k=u.n+?
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+    
+Case 16 : date unique = datetime     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+sscan
+    class: o node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from rq o
+===================================================
+count(*)    
+2     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from rq o left outer join rt u on o.kdt= cast(u.dte as datetime)
+===================================================
+    
+Case 17 : float unique = double     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+sscan
+    class: o node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from rq o
+===================================================
+count(*)    
+2     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: u node[?]
+               index: u_rt_f term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from rq o left outer join rt u on u.f=o.kd
+===================================================
+    
+Case 18 : smallint unique = float     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+sscan
+    class: o node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from rq o
+===================================================
+count(*)    
+2     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: u node[?]
+               index: u_rt_s term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from rq o left outer join rt u on u.s=o.kf
+===================================================
+    
+Case 19 : int unique = float (2^24 and 2^24 + 1 are equal as FLOAT, the join is kept)     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: u node[?]
+               index: u_rt_i term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from rq o left outer join rt u on u.i=o.kf
+===================================================
+count(*)    
+3     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: u node[?]
+               index: u_rt_i term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from rq o left outer join rt u on u.i=o.kf
+===================================================
+0
