@@ -1,0 +1,1113 @@
+===================================================
+0
+===================================================
+0
+===================================================
+40000
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+0
+===================================================
+1500
+===================================================
+0
+===================================================
+0
+===================================================
+1500
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+40000
+===================================================
+0
+===================================================
+0
+===================================================
+97
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    count(distinct k)    min(k)    max(k)    count(distinct grp)    
+40000     40000     0     39999     97     
+
+===================================================
+count(*)    count(distinct cat)    count(nk)    count(distinct sk)    count(v)    
+20000     200     18462     100     18824     
+
+===================================================
+count(*)    sum( char_length(body))    
+1500     26880000     
+
+===================================================
+count(*)    count(distinct k)    count(nk)    count(distinct dt)    
+40000     40000     36364     9000     
+
+===================================================
+count(*)    count(distinct gname)    
+97     97     
+
+===================================================
+count(*)    min( char_length(body))    max( char_length(body))    
+3     8960     8960     
+
+===================================================
+    
+Case 1: GROUP BY + HAVING, sort path (NO_HASH_AGGREGATE) - serial reference; result = 36 groups, 14868 rows, grp 1..36     
+
+===================================================
+grp_cnt    row_cnt    sum_v    sum_min_k    sum_max_k    min_grp    max_grp    
+36     14868     7425434     1806     1438154     1     36     
+
+===================================================
+    
+Case 1: GROUP BY + HAVING, sort path (NO_HASH_AGGREGATE) - parallel; result = same as serial     
+
+===================================================
+grp_cnt    row_cnt    sum_v    sum_min_k    sum_max_k    min_grp    max_grp    
+36     14868     7425434     1806     1438154     1     36     
+
+===================================================
+    
+Case 1: GROUP BY + HAVING, sort path (NO_HASH_AGGREGATE) - PARALLEL(2), lower bound of the degree range; result = same as serial     
+
+===================================================
+grp_cnt    row_cnt    sum_v    sum_min_k    sum_max_k    min_grp    max_grp    
+36     14868     7425434     1806     1438154     1     36     
+
+===================================================
+    
+Case 1: GROUP BY + HAVING, sort path (NO_HASH_AGGREGATE) - PARALLEL(8), upper bound of the degree range; result = same as serial     
+
+===================================================
+grp_cnt    row_cnt    sum_v    sum_min_k    sum_max_k    min_grp    max_grp    
+36     14868     7425434     1806     1438154     1     36     
+
+===================================================
+    
+Case 2: GROUP BY on an all-unique key (hash abandoned -> SORT_GROUP_BY) - serial reference; result = 40000 groups, 40000 rows     
+
+===================================================
+grp_cnt    row_cnt    sum_k    sum_v    
+40000     40000     799980000     19980000     
+
+===================================================
+    
+Case 2: GROUP BY on an all-unique key (hash abandoned -> SORT_GROUP_BY) - parallel sort (NO_PARALLEL_SCAN); result = same as serial     
+
+===================================================
+grp_cnt    row_cnt    sum_k    sum_v    
+40000     40000     799980000     19980000     
+
+===================================================
+    
+Case 2: GROUP BY on an all-unique key (hash abandoned in the scan workers) - parallel scan; result = same as serial     
+
+===================================================
+grp_cnt    row_cnt    sum_k    sum_v    
+40000     40000     799980000     19980000     
+
+===================================================
+    
+Case 3: ORDER BY unique key LIMIT 32000 (SORT_ORDER_WITH_LIMIT) - serial reference; result = 32000 rows, k 0..31999, sum_x = 8 x sum_id     
+
+===================================================
+cnt    dist_k    sum_k    min_k    max_k    sum_id    sum_x    sum_pad    
+32000     32000     511984000     0     31999     640016000     5120128000     3200000     
+
+===================================================
+    
+Case 3: ORDER BY unique key LIMIT 32000 (SORT_ORDER_WITH_LIMIT) - parallel; result = same as serial     
+
+===================================================
+cnt    dist_k    sum_k    min_k    max_k    sum_id    sum_x    sum_pad    
+32000     32000     511984000     0     31999     640016000     5120128000     3200000     
+
+===================================================
+    
+Case 3: ORDER BY unique key LIMIT 32000 (SORT_ORDER_WITH_LIMIT) - PARALLEL(2), lower bound of the degree range; result = same as serial     
+
+===================================================
+cnt    dist_k    sum_k    min_k    max_k    sum_id    sum_x    sum_pad    
+32000     32000     511984000     0     31999     640016000     5120128000     3200000     
+
+===================================================
+    
+Case 3: ORDER BY unique key LIMIT 32000 (SORT_ORDER_WITH_LIMIT) - PARALLEL(8), upper bound of the degree range; result = same as serial     
+
+===================================================
+cnt    dist_k    sum_k    min_k    max_k    sum_id    sum_x    sum_pad    
+32000     32000     511984000     0     31999     640016000     5120128000     3200000     
+
+===================================================
+    
+Case 4: ORDER BY key with ties + id tiebreak, LIMIT 32000 - serial reference; result = 32000 rows, grp 0..77, 240 rows of grp 77 up to id 23260     
+
+===================================================
+cnt    dist_id    sum_grp    max_grp    sum_id    sum_k    sum_x    sum_pad    rows_in_last_grp    max_id_in_last_grp    
+32000     32000     1224658     77     637855640     640573160     5102845120     3200000     240     23260     
+
+===================================================
+    
+Case 4: ORDER BY key with ties + id tiebreak, LIMIT 32000 - parallel; result = same as serial     
+
+===================================================
+cnt    dist_id    sum_grp    max_grp    sum_id    sum_k    sum_x    sum_pad    rows_in_last_grp    max_id_in_last_grp    
+32000     32000     1224658     77     637855640     640573160     5102845120     3200000     240     23260     
+
+===================================================
+    
+Case 5: ROW_NUMBER() OVER (ORDER BY k) (SORT_ANALYTIC) - serial reference; result = 40000 rows, all 40000 matched     
+
+===================================================
+cnt    sum_rn    matched    
+40000     800020000     40000     
+
+===================================================
+    
+Case 5: ROW_NUMBER() OVER (ORDER BY k) (SORT_ANALYTIC) - parallel; result = same as serial     
+
+===================================================
+cnt    sum_rn    matched    
+40000     800020000     40000     
+
+===================================================
+    
+Case 5: ROW_NUMBER() OVER (ORDER BY k) (SORT_ANALYTIC) - PARALLEL(2), lower bound of the degree range; result = same as serial     
+
+===================================================
+cnt    sum_rn    matched    
+40000     800020000     40000     
+
+===================================================
+    
+Case 5: ROW_NUMBER() OVER (ORDER BY k) (SORT_ANALYTIC) - PARALLEL(8), upper bound of the degree range; result = same as serial     
+
+===================================================
+cnt    sum_rn    matched    
+40000     800020000     40000     
+
+===================================================
+    
+Case 6: SUM(v) OVER (PARTITION BY grp ORDER BY id) running sum (SORT_ANALYTIC) - serial reference; result = 40000 rows     
+
+===================================================
+cnt    sum_rs    max_rs    min_rs    
+40000     4095424742     206979     1     
+
+===================================================
+    
+Case 6: SUM(v) OVER (PARTITION BY grp ORDER BY id) running sum (SORT_ANALYTIC) - parallel; result = same as serial     
+
+===================================================
+cnt    sum_rs    max_rs    min_rs    
+40000     4095424742     206979     1     
+
+===================================================
+    
+Case 7: DISTINCT grp ORDER BY grp LIMIT 50 - serial reference; result = 50 rows, grp 0..49     
+
+===================================================
+cnt    sum_g    min_g    max_g    
+50     1225     0     49     
+
+===================================================
+    
+Case 7: DISTINCT grp ORDER BY grp LIMIT 50 - parallel; result = same as serial     
+
+===================================================
+cnt    sum_g    min_g    max_g    
+50     1225     0     49     
+
+===================================================
+    
+Case 8: analytic functions (RANK ... VARIANCE) over three window specs - serial reference; result = 40000 rows     
+
+===================================================
+cnt    s_rank    s_dense_rank    s_ntile    s_lag    s_lead    s_first    s_last    s_count    s_min    s_max    s_sum    s_avg    s_cume_dist    s_percent_rank    s_median    s_stddev    s_variance    
+40000     8267434     8267434     159817     19805527     19975150     1958902     19980000     16494868     33396     39927015     4095424742     19980000143     20048500000     20000000000     199799990     11546936090     3333297029060     
+
+===================================================
+    
+Case 8: analytic functions (RANK ... VARIANCE) over three window specs - parallel; result = same as serial     
+
+===================================================
+cnt    s_rank    s_dense_rank    s_ntile    s_lag    s_lead    s_first    s_last    s_count    s_min    s_max    s_sum    s_avg    s_cume_dist    s_percent_rank    s_median    s_stddev    s_variance    
+40000     8267434     8267434     159817     19805527     19975150     1958902     19980000     16494868     33396     39927015     4095424742     19980000143     20048500000     20000000000     199799990     11546936090     3333297029060     
+
+===================================================
+    
+Case 9: GROUP BY a key with NULLs, NULL values in the aggregates - serial reference; result = 51 groups, 50 non-NULL keys     
+
+===================================================
+grp_cnt    non_null_grp    row_cnt    non_null_v    sum_v    null_grp_rows    
+51     50     20000     18824     9400956     1538     
+
+===================================================
+    
+Case 9: GROUP BY a key with NULLs, NULL values in the aggregates - parallel; result = same as serial     
+
+===================================================
+grp_cnt    non_null_grp    row_cnt    non_null_v    sum_v    null_grp_rows    
+51     50     20000     18824     9400956     1538     
+
+===================================================
+    
+Case 9: GROUP BY expression keys with every aggregate type and DISTINCT aggregates - serial reference; result = 500 groups, 40000 rows     
+
+===================================================
+grp_cnt    row_cnt    sum_v    s_avg    sum_min_k    sum_max_k    s_stddev    s_variance    sum_cnt_dist    sum_sum_dist    
+500     40000     19980000     249748912     255570     19744170     142520270     40845255204     970     46560     
+
+===================================================
+    
+Case 9: GROUP BY expression keys with every aggregate type and DISTINCT aggregates - parallel; result = same as serial     
+
+===================================================
+grp_cnt    row_cnt    sum_v    s_avg    sum_min_k    sum_max_k    s_stddev    s_variance    sum_cnt_dist    sum_sum_dist    
+500     40000     19980000     249748912     255570     19744170     142520270     40845255204     970     46560     
+
+===================================================
+    
+Case 9: GROUP BY a VARCHAR key after a WHERE filter - serial reference; result = 200 groups     
+
+===================================================
+grp_cnt    row_cnt    sum_v    min_cat    max_cat    sum_min_v    sum_max_v    
+200     9393     7044036     cat_00000     cat_00199     120100     179900     
+
+===================================================
+    
+Case 9: GROUP BY a VARCHAR key after a WHERE filter - parallel; result = same as serial     
+
+===================================================
+grp_cnt    row_cnt    sum_v    min_cat    max_cat    sum_min_v    sum_max_v    
+200     9393     7044036     cat_00000     cat_00199     120100     179900     
+
+===================================================
+    
+Case 9: GROUP BY a skewed key, 90 percent of the rows in one group - serial reference; result = 100 groups, largest 18020 rows     
+
+===================================================
+grp_cnt    row_cnt    max_cnt    sum_v    
+100     20000     18020     9400956     
+
+===================================================
+    
+Case 9: GROUP BY a skewed key, 90 percent of the rows in one group - parallel; result = same as serial     
+
+===================================================
+grp_cnt    row_cnt    max_cnt    sum_v    
+100     20000     18020     9400956     
+
+===================================================
+    
+Case 9: GROUP BY a key with one value - serial reference; result = 1 group, 20000 rows     
+
+===================================================
+grp_cnt    row_cnt    sum_v    min_v    max_v    
+1     20000     9400956     0     999     
+
+===================================================
+    
+Case 9: GROUP BY a key with one value - parallel; result = same as serial     
+
+===================================================
+grp_cnt    row_cnt    sum_v    min_v    max_v    
+1     20000     9400956     0     999     
+
+===================================================
+    
+Case 9: GROUP BY followed by ORDER BY - serial reference; result = 97 groups     
+
+===================================================
+grp_cnt    ord_sum    row_cnt    
+97     303526     40000     
+
+===================================================
+    
+Case 9: GROUP BY followed by ORDER BY - parallel; result = same as serial     
+
+===================================================
+grp_cnt    ord_sum    row_cnt    
+97     303526     40000     
+
+===================================================
+    
+Case 9: GROUP BY ... WITH ROLLUP - serial reference; result = 970 detail + 97 subtotal + 1 total rows     
+
+===================================================
+grp_cnt    row_cnt    sum_v    subtotal_rows    grand_total_rows    
+1068     120000     59940000     98     1     
+
+===================================================
+    
+Case 9: GROUP BY ... WITH ROLLUP - parallel; result = same as serial     
+
+===================================================
+grp_cnt    row_cnt    sum_v    subtotal_rows    grand_total_rows    
+1068     120000     59940000     98     1     
+
+===================================================
+    
+Case 9: GROUP BY with HASH_AGGREGATE - serial reference; result = 97 groups, 40000 rows     
+
+===================================================
+grp_cnt    row_cnt    sum_v    sum_min_k    sum_max_k    
+97     40000     19980000     5419     3874462     
+
+===================================================
+    
+Case 9: GROUP BY with HASH_AGGREGATE - parallel; result = same as serial     
+
+===================================================
+grp_cnt    row_cnt    sum_v    sum_min_k    sum_max_k    
+97     40000     19980000     5419     3874462     
+
+===================================================
+    
+Case 9: GROUP BY over overflow tuples - serial reference; result = 50 groups, 1500 rows     
+
+===================================================
+grp_cnt    row_cnt    sum_min_id    sum_max_id    sum_len    
+50     1500     1275     73775     896000     
+
+===================================================
+    
+Case 9: GROUP BY over overflow tuples - parallel; result = same as serial     
+
+===================================================
+grp_cnt    row_cnt    sum_min_id    sum_max_id    sum_len    
+50     1500     1275     73775     896000     
+
+===================================================
+    
+Case 10: analytic with expression partition keys - serial reference; result = 40000 rows, 500 partitions     
+
+===================================================
+cnt    parts    sum_rn    max_rn    
+40000     500     1644177     84     
+
+===================================================
+    
+Case 10: analytic with expression partition keys - parallel; result = same as serial     
+
+===================================================
+cnt    parts    sum_rn    max_rn    
+40000     500     1644177     84     
+
+===================================================
+    
+Case 10: analytic with a VARCHAR partition key - serial reference; result = 20000 rows     
+
+===================================================
+cnt    sum_rn    sum_rs    
+20000     1010000     305380920     
+
+===================================================
+    
+Case 10: analytic with a VARCHAR partition key - parallel; result = same as serial     
+
+===================================================
+cnt    sum_rn    sum_rs    
+20000     1010000     305380920     
+
+===================================================
+    
+Case 10: analytic with NULL partition keys and NULL ordering values - serial reference; result = 20000 rows     
+
+===================================================
+cnt    sum_rn    sum_lag    non_null_lag    
+20000     4601181     9351232     18773     
+
+===================================================
+    
+Case 10: analytic with NULL partition keys and NULL ordering values - parallel; result = same as serial     
+
+===================================================
+cnt    sum_rn    sum_lag    non_null_lag    
+20000     4601181     9351232     18773     
+
+===================================================
+    
+Case 10: analytic with a skewed partition, 90 percent of the rows in one - serial reference; result = 20000 rows, largest 18020     
+
+===================================================
+cnt    sum_rn    max_cnt    
+20000     162390000     18020     
+
+===================================================
+    
+Case 10: analytic with a skewed partition, 90 percent of the rows in one - parallel; result = same as serial     
+
+===================================================
+cnt    sum_rn    max_cnt    
+20000     162390000     18020     
+
+===================================================
+    
+Case 10: analytic with one row per partition - serial reference; result = 40000 rows, every rn 1     
+
+===================================================
+cnt    sum_rn    max_rn    
+40000     40000     1     
+
+===================================================
+    
+Case 10: analytic with one row per partition - parallel; result = same as serial     
+
+===================================================
+cnt    sum_rn    max_rn    
+40000     40000     1     
+
+===================================================
+    
+Case 10: analytic followed by ORDER BY - serial reference; result = 40000 rows     
+
+===================================================
+cnt    ord_sum    
+40000     165829293056     
+
+===================================================
+    
+Case 10: analytic followed by ORDER BY - parallel; result = same as serial     
+
+===================================================
+cnt    ord_sum    
+40000     165829293056     
+
+===================================================
+    
+Case 10: analytic sort of overflow tuples - serial reference; result = 1500 rows, sum rn 23250     
+
+===================================================
+cnt    sum_rn    sum_first_len    sum_len    
+1500     23250     26880000     26880000     
+
+===================================================
+    
+Case 10: analytic sort of overflow tuples - parallel; result = same as serial     
+
+===================================================
+cnt    sum_rn    sum_first_len    sum_len    
+1500     23250     26880000     26880000     
+
+===================================================
+    
+Case 11: ORDER BY DESC LIMIT 32000 - serial reference; result = 32000 rows, k 8000..39999     
+
+===================================================
+cnt    dist_k    sum_k    min_k    max_k    sum_id    sum_x    sum_pad    
+32000     32000     767984000     8000     39999     640016000     5120128000     3200000     
+
+===================================================
+    
+Case 11: ORDER BY DESC LIMIT 32000 - parallel; result = same as serial     
+
+===================================================
+cnt    dist_k    sum_k    min_k    max_k    sum_id    sum_x    sum_pad    
+32000     32000     767984000     8000     39999     640016000     5120128000     3200000     
+
+===================================================
+    
+Case 11: ORDER BY with LIMIT equal to the row count - serial reference; result = 40000 rows     
+
+===================================================
+cnt    dist_k    sum_k    min_k    max_k    sum_id    sum_x    sum_pad    
+40000     40000     799980000     0     39999     800020000     6400160000     4000000     
+
+===================================================
+    
+Case 11: ORDER BY with LIMIT equal to the row count - parallel; result = same as serial     
+
+===================================================
+cnt    dist_k    sum_k    min_k    max_k    sum_id    sum_x    sum_pad    
+40000     40000     799980000     0     39999     800020000     6400160000     4000000     
+
+===================================================
+    
+Case 11: ORDER BY a VARCHAR key LIMIT 32000 - serial reference; result = 32000 rows     
+
+===================================================
+cnt    dist_ck    min_ck    max_ck    sum_id    sum_x    sum_pad    
+32000     32000     0     38798     640069489     5120555912     3200000     
+
+===================================================
+    
+Case 11: ORDER BY a VARCHAR key LIMIT 32000 - parallel; result = same as serial     
+
+===================================================
+cnt    dist_ck    min_ck    max_ck    sum_id    sum_x    sum_pad    
+32000     32000     0     38798     640069489     5120555912     3200000     
+
+===================================================
+    
+Case 11: ORDER BY a key with NULLs LIMIT 32000 - serial reference; result = 32000 rows, 8000 NULL keys     
+
+===================================================
+cnt    non_null_nv    sum_nv    max_nv    sum_id    sum_x    sum_pad    
+32000     24000     9000000     749     637020000     5096160000     3200000     
+
+===================================================
+    
+Case 11: ORDER BY a key with NULLs LIMIT 32000 - parallel; result = same as serial     
+
+===================================================
+cnt    non_null_nv    sum_nv    max_nv    sum_id    sum_x    sum_pad    
+32000     24000     9000000     749     637020000     5096160000     3200000     
+
+===================================================
+0
+===================================================
+    
+Case 12: trace - GROUPBY of a sort-based GROUP BY has a parallel worker line     
+
+===================================================
+grp_cnt    row_cnt    
+97     40000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.px_sort_t)
+
+  rewritten query: (select /*+ NO_HASH_AGGREGATE NO_PARALLEL_SCAN */ count(*) from [dba.px_sort_t] [dba.px_sort_t] group by [dba.px_sort_t].grp)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.cnt) from (select /*+ NO_HASH_AGGREGATE NO_PARALLEL_SCAN */ count(*) as [cnt] from [dba.px_sort_t] [dba.px_sort_t] group by [dba.px_sort_t].grp) d (cnt)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_sort_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: false, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+Case 12: trace - ANALYTIC has a parallel worker line     
+
+===================================================
+cnt    sum_rn    
+40000     800020000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_sort_t)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ row_number() over (order by ?), [dba.px_sort_t].k from [dba.px_sort_t] [dba.px_sort_t])
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.rn) from (select /*+ NO_PARALLEL_SCAN */ row_number() over (order by ?) as [rn], [dba.px_sort_t].k from [dba.px_sort_t] [dba.px_sort_t]) d (rn)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_sort_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+Case 12: trace - ORDERBY of ORDER BY ... LIMIT above the top-N buffer has a parallel worker line     
+
+===================================================
+cnt    sum_x    sum_pad    
+32000     5120128000     3200000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.px_sort_t)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ [dba.px_sort_t].x?, [dba.px_sort_t].x?, [dba.px_sort_t].x?, [dba.px_sort_t].x?, [dba.px_sort_t].x?, [dba.px_sort_t].x?, [dba.px_sort_t].x?, [dba.px_sort_t].x?, [dba.px_sort_t].pad, [dba.px_sort_t].k, [dba.px_sort_t].id from [dba.px_sort_t] [dba.px_sort_t] order by ?, ? for orderby_num()<= ?:? )
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.x?+d.x?+d.x?+d.x?+d.x?+d.x?+d.x?+d.x?), sum( char_length(d.pad)) from (select /*+ NO_PARALLEL_SCAN */ [dba.px_sort_t].x?, [dba.px_sort_t].x?, [dba.px_sort_t].x?, [dba.px_sort_t].x?, [dba.px_sort_t].x?, [dba.px_sort_t].x?, [dba.px_sort_t].x?, [dba.px_sort_t].x?, [dba.px_sort_t].pad, [dba.px_sort_t].k, [dba.px_sort_t].id from [dba.px_sort_t] [dba.px_sort_t] order by ?, ? for orderby_num()<= ?:? ) d (x?, x?, x?, x?, x?, x?, x?, x?, pad, k, id)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_sort_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+Case 12: trace - GROUPBY of a GROUP BY with HASH_AGGREGATE keeps the hash and has no parallel worker line     
+
+===================================================
+grp_cnt    row_cnt    
+97     40000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.px_sort_t)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.px_sort_t] [dba.px_sort_t] group by [dba.px_sort_t].grp)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.cnt) from (select /*+ NO_PARALLEL_SCAN */ count(*) as [cnt] from [dba.px_sort_t] [dba.px_sort_t] group by [dba.px_sort_t].grp) d (cnt)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_sort_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 12: trace - GROUPBY over overflow tuples has a parallel worker line     
+
+===================================================
+grp_cnt    row_cnt    sum_len    
+50     1500     896000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.px_wide_t)
+
+  rewritten query: (select /*+ NO_HASH_AGGREGATE NO_PARALLEL_SCAN */ count(*), max([dba.px_wide_t].body) from [dba.px_wide_t] [dba.px_wide_t] group by [dba.px_wide_t].grp)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.cnt), sum( char_length(d.mb)) from (select /*+ NO_HASH_AGGREGATE NO_PARALLEL_SCAN */ count(*) as [cnt], max([dba.px_wide_t].body) as [mb] from [dba.px_wide_t] [dba.px_wide_t] group by [dba.px_wide_t].grp) d (cnt, mb)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_wide_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: false, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+Case 12: trace - ANALYTIC over overflow tuples has a parallel worker line     
+
+===================================================
+cnt    sum_rn    sum_first_len    
+1500     23250     26880000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_wide_t)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ row_number() over (partition by ? order by ?), first_value([dba.px_wide_t].body) over (partition by ? order by ?) from [dba.px_wide_t] [dba.px_wide_t])
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast(d.rn as bigint)), sum( char_length(d.fb)) from (select /*+ NO_PARALLEL_SCAN */ row_number() over (partition by ? order by ?) as [rn], first_value([dba.px_wide_t].body) over (partition by ? order by ?) as [fb] from [dba.px_wide_t] [dba.px_wide_t]) d (rn, fb)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_wide_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+Case 12: trace - ORDERBY of a plain ORDER BY over overflow tuples has a parallel worker line     
+
+===================================================
+cnt    ord_sum    sum_len    
+1500     842225375     26880000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.px_wide_t)
+
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.px_wide_t].id, [dba.px_wide_t].grp, [dba.px_wide_t].body from [dba.px_wide_t] [dba.px_wide_t] order by ? desc , ?)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast((rownum) as bigint)* cast(d.id as bigint)), sum( char_length(d.body)) from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.px_wide_t].id, [dba.px_wide_t].grp, [dba.px_wide_t].body from [dba.px_wide_t] [dba.px_wide_t] order by ? desc , ?) d (id, grp, body)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_wide_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 13: empty input - GROUP BY (NO_HASH_AGGREGATE); result = 0 groups     
+
+===================================================
+grp_cnt    row_cnt    
+0     null     
+
+===================================================
+    
+Case 13: empty input after a filter - GROUP BY (NO_HASH_AGGREGATE); result = 0 groups     
+
+===================================================
+grp_cnt    row_cnt    
+0     null     
+
+===================================================
+    
+Case 13: empty input - ORDER BY ... LIMIT; result = 0 rows     
+
+===================================================
+cnt    
+0     
+
+===================================================
+    
+Case 13: ORDER BY ... LIMIT 0; result = 0 rows     
+
+===================================================
+cnt    
+0     
+
+===================================================
+0
+===================================================
+    
+Case 13: empty input - analytic sort stays serial (no parallel worker line under ANALYTIC); result = 0 rows     
+
+===================================================
+cnt    sum_rn    
+0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_empty_t)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ row_number() over (partition by ? order by ?) from [dba.px_empty_t] [dba.px_empty_t])
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast(d.rn as bigint)) from (select /*+ NO_PARALLEL_SCAN */ row_number() over (partition by ? order by ?) as [rn] from [dba.px_empty_t] [dba.px_empty_t]) d (rn)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_empty_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 14: plain ORDER BY an INT key - serial reference; result = 40000 rows     
+
+===================================================
+cnt    ord_sum    
+40000     15998218680000     
+
+===================================================
+    
+Case 14: plain ORDER BY an INT key - parallel; result = same as serial     
+
+===================================================
+cnt    ord_sum    
+40000     15998218680000     
+
+===================================================
+    
+Case 14: plain ORDER BY an INT key - parallel, run again; result = same as serial     
+
+===================================================
+cnt    ord_sum    
+40000     15998218680000     
+
+===================================================
+    
+Case 14: plain ORDER BY a BIGINT key - serial reference; result = 40000 rows     
+
+===================================================
+cnt    ord_sum    
+40000     15998218680000     
+
+===================================================
+    
+Case 14: plain ORDER BY a BIGINT key - parallel; result = same as serial     
+
+===================================================
+cnt    ord_sum    
+40000     15998218680000     
+
+===================================================
+    
+Case 14: plain ORDER BY a DOUBLE key - serial reference; result = 40000 rows     
+
+===================================================
+cnt    ord_sum    
+40000     15998218680000     
+
+===================================================
+    
+Case 14: plain ORDER BY a DOUBLE key - parallel; result = same as serial     
+
+===================================================
+cnt    ord_sum    
+40000     15998218680000     
+
+===================================================
+    
+Case 14: plain ORDER BY a DATE key with ties - serial reference; result = 40000 rows     
+
+===================================================
+cnt    ord_sum    
+40000     16009133875460     
+
+===================================================
+    
+Case 14: plain ORDER BY a DATE key with ties - parallel; result = same as serial     
+
+===================================================
+cnt    ord_sum    
+40000     16009133875460     
+
+===================================================
+    
+Case 14: plain ORDER BY a CHAR key - serial reference; result = 40000 rows     
+
+===================================================
+cnt    ord_sum    
+40000     15998218680000     
+
+===================================================
+    
+Case 14: plain ORDER BY a CHAR key - parallel; result = same as serial     
+
+===================================================
+cnt    ord_sum    
+40000     15998218680000     
+
+===================================================
+    
+Case 14: plain ORDER BY MOD and CASE WHEN expressions - serial reference; result = 40000 rows     
+
+===================================================
+cnt    ord_sum    
+40000     16000327612430     
+
+===================================================
+    
+Case 14: plain ORDER BY MOD and CASE WHEN expressions - parallel; result = same as serial     
+
+===================================================
+cnt    ord_sum    
+40000     16000327612430     
+
+===================================================
+    
+Case 14: plain ORDER BY over a join - serial reference; result = 40000 rows     
+
+===================================================
+cnt    ord_sum    
+40000     16000986279197     
+
+===================================================
+    
+Case 14: plain ORDER BY over a join - parallel; result = same as serial     
+
+===================================================
+cnt    ord_sum    
+40000     16000986279197     
+
+===================================================
+    
+Case 14: DISTINCT with ORDER BY - serial reference; result = 1000 rows     
+
+===================================================
+cnt    ord_sum    
+1000     166666500     
+
+===================================================
+    
+Case 14: DISTINCT with ORDER BY - parallel; result = same as serial     
+
+===================================================
+cnt    ord_sum    
+1000     166666500     
+
+===================================================
+    
+Case 14: plain ORDER BY a key with NULLs - serial reference; result = 40000 rows, the 3636 NULL rows first (null_pos_sum = 1 + ... + 3636)     
+
+===================================================
+cnt    ord_sum    null_pos_sum    
+40000     16070383050463     6612066     
+
+===================================================
+    
+Case 14: plain ORDER BY a key with NULLs - parallel; result = same as serial     
+
+===================================================
+cnt    ord_sum    null_pos_sum    
+40000     16070383050463     6612066     
+
+===================================================
+    
+Case 14: plain ORDER BY over overflow tuples - serial reference; result = 1500 rows     
+
+===================================================
+cnt    ord_sum    sum_len    
+1500     842225375     26880000     
+
+===================================================
+    
+Case 14: plain ORDER BY over overflow tuples - parallel; result = same as serial     
+
+===================================================
+cnt    ord_sum    sum_len    
+1500     842225375     26880000     
+
+===================================================
+    
+Case 14: plain ORDER BY an empty table; result = 0 rows     
+
+===================================================
+cnt    ord_sum    
+0     null     
+
+===================================================
+0
+===================================================
+    
+Case 14: trace - plain ORDER BY of 3 rows has a parallel worker line     
+
+===================================================
+cnt    ord_sum    sum_len    
+3     10     26880     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.px_rnd_t)
+
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.px_rnd_t].id, [dba.px_rnd_t].body from [dba.px_rnd_t] [dba.px_rnd_t] where ([dba.px_rnd_t].id<= ?:? ) order by ? desc )
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast((rownum) as bigint)* cast(d.id as bigint)), sum( char_length(d.body)) from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.px_rnd_t].id, [dba.px_rnd_t].body from [dba.px_rnd_t] [dba.px_rnd_t] where ([dba.px_rnd_t].id<= ?:? ) order by ? desc ) d (id, body)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_rnd_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+Case 14: trace - plain ORDER BY of 2 rows, no more rows than its degree, has no parallel worker line     
+
+===================================================
+cnt    ord_sum    sum_len    
+2     4     17920     
+
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_rnd_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
