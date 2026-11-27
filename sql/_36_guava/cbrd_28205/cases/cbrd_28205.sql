@@ -13,6 +13,10 @@
  *  the IS NOT NULL put on a nullable foreign key goes to WHERE, a leftover ON term goes to WHERE or to an
  *  outer join ON, or a join term that rejected the NULL-padded rows is dropped. Otherwise the primary key
  *  table is still eliminated. An IS NOT NULL in an ON or in an OR no longer replaces the one put in WHERE.
+ *  With no RIGHT OUTER JOIN, the primary key table is kept when the join term is in a LEFT OUTER or ANTI
+ *  JOIN ON, when the rest of its ON would move to a LEFT OUTER or ANTI JOIN ON or has no ON to move to, or
+ *  when a primary key constant term has no child term with the same constant that filters rows or is in the
+ *  same ON. Before, these gave wrong results, an error or a DELETE of rows the ON rejects.
  *
  *  The expected result of each query is in its evaluate line. It is the result of the same query with the
  *  preceding join wrapped in a derived table that is not merged.
@@ -52,10 +56,17 @@
  *    Case 62-63: nullable foreign key eliminated, WHERE has a.bid is not null OR another term: without and
  *                with a RIGHT JOIN before the primary key table
  *    Case 64:    nullable foreign key eliminated, a.bid is not null in a LEFT JOIN ON
+ *    Case 65-75: no RIGHT JOIN, the primary key table is kept: extra ON term before a LEFT JOIN or a NOT
+ *                EXISTS, last after a LEFT JOIN, with ORDERED, join term in a LEFT JOIN ON, constant term
+ *                b.id = 2 with an unrelated a.id = 1, b.id = 1 and a.bid = 1 in different LEFT JOIN ONs,
+ *                WHERE b.id = 1 before a LEFT JOIN, last after a LEFT JOIN, with ORDERED, DELETE
+ *    Case 76-79: no RIGHT JOIN, eliminated: extra ON term moves to an INNER JOIN ON, b.id = 1 in a LEFT JOIN
+ *                ON with a.bid = 1 in WHERE, b.id = 1 alone in the primary key table ON, nullable foreign key
+ *                before a LEFT JOIN
  */
 
 drop table if exists t28205_m, t28205_n, t28205_o, t28205_x, t28205_y, t28205_z, t28205_a, t28205_b, t28205_c, t28205_d, t28205_bi;
-drop table if exists t28205_a2, t28205_ka, t28205_kan, t28205_kc2, t28205_kb, t28205_kc, t28205_kd;
+drop table if exists t28205_a2, t28205_ka, t28205_kan, t28205_kan2, t28205_kc2, t28205_kb, t28205_kc, t28205_kd;
 
 create table t28205_m (a int);
 create table t28205_n (a int, b int);
@@ -304,5 +315,57 @@ select a.id, c.id from t28205_ka a right join t28205_kc c on c.v = a.id inner jo
 evaluate 'Case 64: nullable foreign key, a.bid is not null in a LEFT JOIN ON; expected (1, 1) (2, 2) (4, NULL)';
 select a.id, d.id from t28205_ka a inner join t28205_kb b on b.id = a.bid left join t28205_kd d on d.v = a.id and a.bid is not null order by 1, 2;
 
+evaluate 'Case 65: no RIGHT JOIN, a.id <> 2 in the primary key table ON, then LEFT JOIN, kept; expected (1, 1) (4, NULL)';
+select a.id, d.id from t28205_kan a inner join t28205_kb b on b.id = a.bid and a.id <> 2 left join t28205_kd d on d.v = a.id order by 1, 2;
+
+evaluate 'Case 66: a.id <> 2 in the primary key table ON, then NOT EXISTS, kept; expected (4)';
+select a.id from t28205_kan a inner join t28205_kb b on b.id = a.bid and a.id <> 2 where not exists (select 1 from t28205_kd d where d.v = a.id) order by 1;
+
+evaluate 'Case 67: the primary key table last after a LEFT JOIN, a.id <> 2 in its ON, kept; expected (1, 1) (4, NULL)';
+select a.id, d.id from t28205_kan a left join t28205_kd d on d.v = a.id inner join t28205_kb b on b.id = a.bid and a.id <> 2 order by 1, 2;
+
+evaluate 'Case 68: ORDERED, a.id <> 2 in the primary key table ON, kept; expected (1) (4)';
+select /*+ ORDERED */ a.id from t28205_kan a inner join t28205_kb b on b.id = a.bid and a.id <> 2 order by 1;
+
+evaluate 'Case 69: the join term in a LEFT JOIN ON, kept; expected (1, NULL) (1, NULL) (1, 1) (2, NULL) (2, NULL) (2, 2) (4, NULL) (4, NULL) (4, NULL)';
+select a.id, d.id from t28205_kan a inner join t28205_kb b on a.id <> 9 left join t28205_kd d on d.v = a.id and b.id = a.bid order by 1, 2;
+
+evaluate 'Case 70: b.id = 2 in a LEFT JOIN ON with an unrelated a.id = 1, kept; expected (1, NULL)';
+select a.id, d.id from t28205_kan a inner join t28205_kb b on b.id = a.bid and a.id = 1 left join t28205_kd d on d.v = a.id and b.id = 2 order by 1, 2;
+
+evaluate 'Case 71: b.id = 1 and a.bid = 1 in different LEFT JOIN ONs, kept; expected (1, 1, 1) (2, NULL, NULL) (4, NULL, NULL)';
+select a.id, d.id, c.id from t28205_kan a inner join t28205_kb b on b.id = a.bid left join t28205_kd d on d.v = a.id and b.id = 1 left join t28205_kc c on c.v = a.id and a.bid = 1 order by 1, 2, 3;
+
+evaluate 'Case 72: WHERE b.id = 1, LEFT JOIN after the primary key table, kept; expected (1, 1)';
+select a.id, d.id from t28205_kan a inner join t28205_kb b on b.id = a.bid left join t28205_kd d on d.v = a.id where b.id = 1 order by 1, 2;
+
+evaluate 'Case 73: WHERE b.id = 1, the primary key table last after a LEFT JOIN, kept; expected (1, 1)';
+select a.id, d.id from t28205_kan a left join t28205_kd d on d.v = a.id inner join t28205_kb b on b.id = a.bid where b.id = 1 order by 1, 2;
+
+evaluate 'Case 74: ORDERED, WHERE b.id = 1, kept; expected (1)';
+select /*+ ORDERED */ a.id from t28205_kan a inner join t28205_kb b on b.id = a.bid where b.id = 1 order by 1;
+
+evaluate 'Case 75: DELETE with a.id = 99 in the primary key table ON, then LEFT JOIN, deletes nothing; expected (3)';
+create table t28205_kan2 (id int, bid int not null, foreign key (bid) references t28205_kb (id));
+insert into t28205_kan2 select * from t28205_kan;
+delete a from t28205_kan2 a inner join t28205_kb b on b.id = a.bid and a.id = 99 left join t28205_kd d on d.v = a.id;
+select count(*) from t28205_kan2;
+
+evaluate 'Case 76: a.id <> 2 in the primary key table ON moves to an INNER JOIN ON, eliminated; expected (1, 1, 1)';
+--@queryplan
+select a.id, c.id, d.id from t28205_kan a inner join t28205_kb b on b.id = a.bid and a.id <> 2 inner join t28205_kc c on c.v = a.id left join t28205_kd d on d.v = a.id order by 1, 2, 3;
+
+evaluate 'Case 77: b.id = 1 in a LEFT JOIN ON, a.bid = 1 in WHERE, eliminated; expected (1, 1)';
+--@queryplan
+select a.id, d.id from t28205_kan a inner join t28205_kb b on b.id = a.bid left join t28205_kd d on d.v = a.id and b.id = 1 where a.bid = 1 order by 1, 2;
+
+evaluate 'Case 78: b.id = 1 alone in the primary key table ON, the join term in WHERE, eliminated; expected (1, 1)';
+--@queryplan
+select a.id, d.id from t28205_kan a inner join t28205_kb b on b.id = 1 left join t28205_kd d on d.v = a.id where b.id = a.bid and a.bid = 1 order by 1, 2;
+
+evaluate 'Case 79: nullable foreign key, LEFT JOIN after the primary key table, eliminated; expected (1, 1) (2, 2) (4, NULL)';
+--@queryplan
+select a.id, d.id from t28205_ka a inner join t28205_kb b on b.id = a.bid left join t28205_kd d on d.v = a.id order by 1, 2;
+
 drop table if exists t28205_m, t28205_n, t28205_o, t28205_x, t28205_y, t28205_z, t28205_a, t28205_b, t28205_c, t28205_d, t28205_bi;
-drop table if exists t28205_a2, t28205_ka, t28205_kan, t28205_kc2, t28205_kb, t28205_kc, t28205_kd;
+drop table if exists t28205_a2, t28205_ka, t28205_kan, t28205_kan2, t28205_kc2, t28205_kb, t28205_kc, t28205_kd;

@@ -1028,6 +1028,222 @@ id    id
 4     null     
 
 ===================================================
+    
+Case 65: no RIGHT JOIN, a.id <> 2 in the primary key table ON, then LEFT JOIN, kept; expected (1, 1) (4, NULL)     
+
+===================================================
+id    id    
+1     1     
+4     null     
+
+===================================================
+    
+Case 66: a.id <> 2 in the primary key table ON, then NOT EXISTS, kept; expected (4)     
+
+===================================================
+id    
+4     
+
+===================================================
+    
+Case 67: the primary key table last after a LEFT JOIN, a.id <> 2 in its ON, kept; expected (1, 1) (4, NULL)     
+
+===================================================
+id    id    
+1     1     
+4     null     
+
+===================================================
+    
+Case 68: ORDERED, a.id <> 2 in the primary key table ON, kept; expected (1) (4)     
+
+===================================================
+id    
+1     
+4     
+
+===================================================
+    
+Case 69: the join term in a LEFT JOIN ON, kept; expected (1, NULL) (1, NULL) (1, 1) (2, NULL) (2, NULL) (2, 2) (4, NULL) (4, NULL) (4, NULL)     
+
+===================================================
+id    id    
+1     null     
+1     null     
+1     1     
+2     null     
+2     null     
+2     2     
+4     null     
+4     null     
+4     null     
+
+===================================================
+    
+Case 70: b.id = 2 in a LEFT JOIN ON with an unrelated a.id = 1, kept; expected (1, NULL)     
+
+===================================================
+id    id    
+1     null     
+
+===================================================
+    
+Case 71: b.id = 1 and a.bid = 1 in different LEFT JOIN ONs, kept; expected (1, 1, 1) (2, NULL, NULL) (4, NULL, NULL)     
+
+===================================================
+id    id    id    
+1     1     1     
+2     null     null     
+4     null     null     
+
+===================================================
+    
+Case 72: WHERE b.id = 1, LEFT JOIN after the primary key table, kept; expected (1, 1)     
+
+===================================================
+id    id    
+1     1     
+
+===================================================
+    
+Case 73: WHERE b.id = 1, the primary key table last after a LEFT JOIN, kept; expected (1, 1)     
+
+===================================================
+id    id    
+1     1     
+
+===================================================
+    
+Case 74: ORDERED, WHERE b.id = 1, kept; expected (1)     
+
+===================================================
+id    
+1     
+
+===================================================
+    
+Case 75: DELETE with a.id = 99 in the primary key table ON, then LEFT JOIN, deletes nothing; expected (3)     
+
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+count(*)    
+3     
+
+===================================================
+    
+Case 76: a.id <> 2 in the primary key table ON moves to an INNER JOIN ON, eliminated; expected (1, 1, 1)     
+
+===================================================
+id    id    id    
+1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: a node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.id, c.id, d.id from t?_kan a inner join t?_kc c on c.v=a.id and a.id<>? left outer join t?_kd d on d.v=a.id order by ?, ?, ?
+===================================================
+    
+Case 77: b.id = 1 in a LEFT JOIN ON, a.bid = 1 in WHERE, eliminated; expected (1, 1)     
+
+===================================================
+id    id    
+1     1     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: a node[?]
+                            index: fk_t?_kan_bid term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.id, d.id from t?_kan a left outer join t?_kd d on d.v=a.id where a.bid= ?:?  order by ?, ?
+===================================================
+    
+Case 78: b.id = 1 alone in the primary key table ON, the join term in WHERE, eliminated; expected (1, 1)     
+
+===================================================
+id    id    
+1     1     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: a node[?]
+                            index: fk_t?_kan_bid term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.id, d.id from t?_kan a left outer join t?_kd d on d.v=a.id where a.bid= ?:?  order by ?, ?
+===================================================
+    
+Case 79: nullable foreign key, LEFT JOIN after the primary key table, eliminated; expected (1, 1) (2, 2) (4, NULL)     
+
+===================================================
+id    id    
+1     1     
+2     2     
+4     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.id, d.id from t?_ka a left outer join t?_kd d on d.v=a.id where a.bid is not null  order by ?, ?
+===================================================
 0
 ===================================================
 0
