@@ -24,7 +24,8 @@
  *           chooses sscan here)
  *   Case 2: 50% range, non-covering -> sscan (control: a wide range still
  *           goes to the full scan)
- *   Case 3: Case 1 with cost_heap_fetch_per_oid = 20 -> sscan (shows that the
+ *   Case 3: Case 1 with cost_heap_fetch_per_oid = 20 -> no lookup in key order:
+ *           a bitmap heap scan since CBRD-28032, sscan before it (shows that the
  *           penalty alone flips the plan of Case 1)
  */
 drop table if exists oa_t, oa_d;
@@ -56,10 +57,10 @@ evaluate '[2] 50% range, non-covering: sscan';
 --@queryplan
 select /*+ recompile */ count(pad) from oa_t where k between 0 and 99;
 
--- Case 3: the old penalty 20 turns Case 1 into sscan
+-- Case 3: the old penalty 20 turns the lookup in key order of Case 1 away (a bitmap heap scan, CBRD-28032)
 set system parameters 'cost_heap_fetch_per_oid=20';
 
-evaluate '[3] 15% range with cost_heap_fetch_per_oid=20: sscan';
+evaluate '[3] 15% range with cost_heap_fetch_per_oid=20: no lookup in key order';
 --@queryplan
 select /*+ recompile */ count(pad) from oa_t where k between 0 and 29;
 
