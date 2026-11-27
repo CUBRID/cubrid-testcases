@@ -22,6 +22,14 @@ insert into tx(col_c, col_d, col_a) values ('aaa001',DATETIME'2010-09-20',1),('a
 --TEST
 SELECT /*+ recompile */   *  
 FROM   tx  
+WHERE   col_c IN ( select col_c from ty where col_c between 'a' and 'b' )
+using index i_tx_col_c_col_d_d_col_a_col_b(+)
+order by col_d desc
+limit 30;
+
+--TEST
+SELECT /*+ recompile */   *  
+FROM   tx  
 WHERE   col_c IN ( select /*+ NO_UNNEST */ col_c from ty where col_c between 'a' and 'b' )
 using index i_tx_col_c_col_d_d_col_a_col_b(+)
 order by col_d desc
@@ -35,6 +43,14 @@ using index i_tx_col_c_col_d_d(+)
 order by col_d desc
 limit 1;
 
+
+--TEST
+SELECT /*+ recompile */  length(col_c),  col_d
+FROM   tx  
+WHERE   col_c IN ( select col_c from ty where col_c between 'a' and 'b' )
+using index i_tx_col_c_col_d_d_col_a_col_b(+)
+order by col_d desc
+limit 30;
 
 --TEST
 SELECT /*+ recompile */  length(col_c),  col_d

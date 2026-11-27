@@ -403,17 +403,11 @@ count(*)    sum(sb.v)
 5     15     
 
 Query plan:
-temp(distinct)
-    subplan: sscan
-                 class: ss node[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select distinct ss.k from table_ss ss)
-Query plan:
 idx-join (inner join)
-    outer: sscan
-               class: av? node[?]
+    outer: temp(distinct)
+               subplan: sscan
+                            class: ss node[?]
+                            cost:  ? card ?
                cost:  ? card ?
     inner: iscan
                class: sb node[?]
@@ -421,23 +415,17 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*), sum(sb.v) from table_sb sb inner join (select distinct ss.k from table_ss ss) av? (av_?) on av?.av_?=sb.k
+select count(*), sum(sb.v) from table_sb sb semi join table_ss ss on ss.k=sb.k
 ===================================================
 count(*)    sum(sb.v)    
 5     15     
 
 Query plan:
-temp(distinct)
-    subplan: sscan
-                 class: ss node[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select distinct ss.k from table_ss ss)
-Query plan:
 idx-join (inner join)
-    outer: sscan
-               class: av? node[?]
+    outer: temp(distinct)
+               subplan: sscan
+                            class: ss node[?]
+                            cost:  ? card ?
                cost:  ? card ?
     inner: iscan
                class: sb node[?]
@@ -445,23 +433,17 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_IDX(ss) */ count(*), sum(sb.v) from table_sb sb inner join (select distinct ss.k from table_ss ss) av? (av_?) on av?.av_?=sb.k
+select /*+ USE_IDX(ss) */ count(*), sum(sb.v) from table_sb sb semi join table_ss ss on ss.k=sb.k
 ===================================================
 count(*)    sum(sb.v)    
 5     15     
 
 Query plan:
-temp(distinct)
-    subplan: sscan
-                 class: ss node[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select distinct ss.k from table_ss ss)
-Query plan:
 idx-join (inner join)
-    outer: sscan
-               class: av? node[?]
+    outer: temp(distinct)
+               subplan: sscan
+                            class: ss node[?]
+                            cost:  ? card ?
                cost:  ? card ?
     inner: iscan
                class: sb node[?]
@@ -469,6 +451,6 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_IDX(ss) */ count(*), sum(sb.v) from table_sb sb inner join (select distinct ss.k from table_ss ss) av? (av_?) on av?.av_?=sb.k
+select /*+ USE_IDX(ss) */ count(*), sum(sb.v) from table_sb sb semi join table_ss ss on ss.k=sb.k
 ===================================================
 0
