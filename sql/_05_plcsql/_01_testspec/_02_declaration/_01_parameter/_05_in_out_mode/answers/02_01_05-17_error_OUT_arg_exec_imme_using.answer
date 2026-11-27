@@ -1,0 +1,142 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: an uncaught refusal fails the outer CALL, and the procedure writes no row     
+
+===================================================
+0
+===================================================
+Error:-889
+===================================================
+tag    v    
+
+===================================================
+    
+Case 2: the refusal of an OUT parameter is caught by WHEN OTHERS, and the variable keeps 3     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+tag    v    msg    
+caught     3     Semantic: before ' )'
+Argument 1 of dba.t28189_out is bound as an IN value by a USING clause but is passed to an OUT parameter. call t28189_out( ?:0 )     
+
+===================================================
+    
+Case 3: an IN OUT parameter is refused too, with USING and with USING IN     
+
+===================================================
+1
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+tag    v    msg    
+caught     3     Semantic: before ' )'
+Argument 1 of dba.t28189_inout is bound as an IN value by a USING clause but is passed to an IN OUT parameter. call t28189_inout( ?:0 )     
+caught_in     3     Semantic: before ' )'
+Argument 1 of dba.t28189_inout is bound as an IN value by a USING clause but is passed to an IN OUT parameter. call t28189_inout( ?:0 )     
+
+===================================================
+    
+Case 4: IN and OUT arguments in one CALL - only argument 2, the OUT one, is refused     
+
+===================================================
+2
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+tag    v    msg    
+caught     3     Semantic: before ' )'
+Argument 2 of dba.t28189_q is bound as an IN value by a USING clause but is passed to an OUT parameter. call t28189_q( ?:0 ,  ?:1 )     
+
+===================================================
+    
+Case 5: a dynamic SQL built by concatenation is refused too     
+
+===================================================
+1
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+tag    v    msg    
+caught     3     Semantic: before ' )'
+Argument 1 of dba.t28189_out is bound as an IN value by a USING clause but is passed to an OUT parameter. call t28189_out( ?:0 )     
+
+===================================================
+    
+Case 6: upper case, an owner prefix, a quoted name, two OUT parameters, USING NULL, and a bind value before a constant are all refused at argument 1     
+
+===================================================
+1
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+tag    v    msg    
+upper     3     Semantic: before ' )'
+Argument 1 of dba.t28189_out is bound as an IN value by a USING clause but is passed to an OUT parameter. call T28189_OUT( ?:0 )     
+owner     3     Semantic: before ' )'
+Argument 1 of dba.t28189_out is bound as an IN value by a USING clause but is passed to an OUT parameter. call dba.t28189_out( ?:0 )     
+quoted     3     Semantic: before ' )'
+Argument 1 of dba.t28189_out is bound as an IN value by a USING clause but is passed to an OUT parameter. call t28189_out( ?:0 )     
+bind_first     3     Semantic: before ' , 7)'
+Argument 1 of dba.t28189_oo is bound as an IN value by a USING clause but is passed to an OUT parameter. call t28189_oo( ?:0 , 7)     
+two_out     34     Semantic: before ' , ?)'
+Argument 1 of dba.t28189_oo is bound as an IN value by a USING clause but is passed to an OUT parameter. call t28189_oo( ?:0 ,  ?:1 )     
+using_null     1     Semantic: before ' )'
+Argument 1 of dba.t28189_out is bound as an IN value by a USING clause but is passed to an OUT parameter. call t28189_out( ?:0 )     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
