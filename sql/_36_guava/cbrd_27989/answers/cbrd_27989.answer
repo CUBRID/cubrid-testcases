@@ -221,6 +221,11 @@ rownum    a    row_number() over (order by a)    sum(c) over (order by b, a)
 ===================================================
 trace    
 
+Query Plan:
+  INDEX SCAN (dba.t?.i_t?_a) (key range: ([dba.t?].a> ?:? ))
+
+  rewritten query: select rownum, [dba.t?].a, row_number() over (order by ?), sum([dba.t?].c) over (order by ?, ?) from [dba.t?] [dba.t?] where ([dba.t?].a> ?:? )
+
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.t?.i_t?_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
@@ -253,6 +258,11 @@ rownum    a    row_number() over (order by a)    lead(a, 1, null) over (order by
 
 ===================================================
 trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.i_t?_a) (key range: ([dba.t?].a> ?:? ), covered: true)
+
+  rewritten query: select rownum, [dba.t?].a, row_number() over (order by ?), lead([dba.t?].a, ?, null) over (order by ?) from [dba.t?] [dba.t?] where ([dba.t?].a> ?:? )
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)

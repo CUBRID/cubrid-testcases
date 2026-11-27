@@ -67,17 +67,18 @@ select a, max (a) over (order by a), lead (a) over (order by b, a), lag (a, 2) o
 evaluate 'Case 11: ROWNUM range without a selected ROWNUM, NTILE, FIRST_VALUE and LAST_VALUE of the sorting group are computed from all rows';
 select a, max (a) over (order by a), ntile (4) over (order by b, a), first_value (a) over (order by b, a), last_value (a) over (order by b, a) from t27989 where a > 0 and rownum between 3 and 8;
 
--- same query as Case 1
+-- the query of Case 1 with the recompile hint: the same text would reuse the cached plan of Case 1, and the
+-- trace would then depend on the plan cache, so Cases 12 and 13 compile their plans again
 evaluate 'Case 12: the trace of the reproduction shows the first group skipping its sort and the second group sorting, ROWNUM is 1 to 12 in output order; result = first ANALYTIC line sort: false, second sort: true';
 set trace on;
-select rownum, a, row_number () over (order by a), sum (c) over (order by b, a) from t27989 where a > 0;
+select /*+ recompile */ rownum, a, row_number () over (order by a), sum (c) over (order by b, a) from t27989 where a > 0;
 show trace;
 set trace off;
 
--- same query as Case 9
+-- the query of Case 9 with the recompile hint, for the same reason as Case 12
 evaluate 'Case 13: the trace of the single group shows that its sort is skipped (control); result = one ANALYTIC line, sort: false';
 set trace on;
-select rownum, a, row_number () over (order by a), lead (a) over (order by a) from t27989 where a > 0;
+select /*+ recompile */ rownum, a, row_number () over (order by a), lead (a) over (order by a) from t27989 where a > 0;
 show trace;
 set trace off;
 
