@@ -14,6 +14,14 @@
  *  term as sargs in its plan. CTP masks the digits of a plan and a trace, so they are read
  *  by their tokens. The page latch timeout itself needs two sessions and is a shell case.
  *
+ *  Cases 8 and 10 read a row and then evaluate what may wait for another page or a lock: the
+ *  heap step of a bitmap heap scan evaluated its data filter with the row's heap page held, and
+ *  a path expression waited for a class lock with the fetched object's page held. A debug
+ *  server checks at those operators that no page is held. Case 9: a scalar subquery that is a
+ *  select list item runs when the first row is output, so every worker of a parallel index scan
+ *  ran it, under the worker's leaf; no worker reads the index of such a block now. A subquery
+ *  that is an operand of an expression runs before the scan opens and keeps the parallel scan.
+ *
  *  Coverage:
  *    Case 1:  table subquery in a key filter (NOT IN, ALL, SOME, NULL, empty set)
  *    Case 2:  a table subquery runs once when no key reaches the key filter
@@ -22,10 +30,15 @@
  *    Case 5:  ORDER BY with LIMIT over an IN list keeps its rows next to such a term
  *    Case 6:  outer join ON condition with a stored function over a covering inner scan
  *    Case 7:  GROUPBY_NUM, START WITH and CONNECT BY conditions with a stored function
+ *    Case 8:  bitmap heap scan whose data filter reads a serial or an index statistic
+ *    Case 9:  no worker reads the index of a block whose select list item is a scalar subquery
+ *    Case 10: path expression with a condition and a subquery on the fetched object
  */
 
-drop table if exists t_key, t_left, t_right, t_tree, t_big;
+drop table if exists t_key, t_left, t_right, t_tree, t_big, t_ref, t_obj;
 drop serial if exists s_cnt;
+drop serial if exists s_bm;
+drop serial if exists s_sel;
 
 -- index (a, b, c): a is 1 to 3, b is 1 to 10 for each a, c is 1 for an odd b and 0 for an even b; 30 rows
 create table t_key (a int, b int, c int, d varchar (10));
@@ -43,9 +56,19 @@ insert into t_tree select rownum, nullif (rownum / 2, 0) from db_class limit 15;
 -- parallel table: 100000 rows, about 220 heap pages, about 7 times the parallel heap scan threshold of test_mode (32 pages)
 create table t_big (a int, b int);
 insert into t_big select rownum, mod (rownum, 1000) from db_class x, db_class y, db_class z, db_class w limit 100000;
+-- the range a between 1 and 4000 reads 4 percent of t_big through i_big: a bitmap heap scan
+create index i_big on t_big (a);
+-- objects: t_ref.o points at the t_obj row of the same x; one t_ref row points at nothing
+create table t_obj (x int, y varchar (10)) dont_reuse_oid;
+insert into t_obj select rownum, 'p' || rownum from db_class limit 10;
+create table t_ref (o t_obj, z int);
+insert into t_ref select t_obj, x from t_obj;
+insert into t_ref values (null, 99);
 create serial s_cnt;
+create serial s_bm;
+create serial s_sel;
 create or replace function f_same (x int) return int as begin return x; end;
-update statistics on t_key, t_left, t_right, t_tree, t_big with fullscan;
+update statistics on t_key, t_left, t_right, t_tree, t_big, t_obj, t_ref with fullscan;
 
 
 evaluate 'Case 1: table subquery in a key filter (NOT IN, ALL, SOME, NULL, empty set); result = index ignored';
@@ -113,6 +136,37 @@ select id, level from t_tree start with id = 2 connect by prior id = pid order b
 select id, level from t_tree start with id = 1 connect by prior id = pid and f_same (id) < 12 order by id;
 select id, level from t_tree start with id = 1 connect by prior id = pid and id < 12 order by id;
 
+
+evaluate 'Case 8: bitmap heap scan whose data filter reads a serial or an index statistic; result = index ignored';
+--@queryplan
+select /*+ recompile no_parallel_scan */ count(*), sum (b) from t_big where a between 1 and 4000 and b < index_cardinality ('t_big', 'i_big', 0);
+select /*+ no_parallel_scan */ count(*), sum (b) from t_big ignore index (i_big) where a between 1 and 4000 and b < index_cardinality ('t_big', 'i_big', 0);
+select /*+ recompile no_parallel_scan */ count(*), sum (b) from t_big where a between 1 and 4000 and b < s_bm.next_value + 1000;
+select /*+ no_parallel_scan */ count(*), sum (b) from t_big ignore index (i_big) where a between 1 and 4000 and b < s_bm.next_value + 1000;
+select s_bm.next_value from db_root;
+
+
+evaluate 'Case 9: no worker reads the index of a block whose select list item is a scalar subquery, the same subquery as an operand runs before the scan and stays parallel; the serial gives 2 next; result = no_parallel_scan';
+set trace on;
+select /*+ recompile parallel(4) */ a, 0 + (select count(*) from t_key) from t_big where b = 999 and a <= 10000 using index i_big(+) order by 1, 2;
+show trace;
+select /*+ recompile parallel(4) */ a, (select s_sel.next_value from db_root) from t_big where b = 999 and a <= 10000 using index i_big(+) order by 1, 2;
+show trace;
+-- trace goes off before the queries that no show trace reads
+set trace off;
+select s_sel.next_value from db_root;
+select /*+ no_parallel_scan */ a, 1 from t_big where b = 999 and a <= 10000 order by 1, 2;
+
+
+evaluate 'Case 10: path expression with a condition and a subquery on the fetched object; result = join';
+select /*+ recompile */ z, o.x, o.y from t_ref where o.x > 5 order by z;
+select r.z, p.x, p.y from t_ref r, t_obj p where r.o = p and p.x > 5 order by r.z;
+select /*+ recompile */ z, (select count(*) from t_key k where k.b = t_ref.o.x) from t_ref where o.x < 4 order by z;
+select r.z, (select count(*) from t_key k where k.b = p.x) from t_ref r, t_obj p where r.o = p and p.x < 4 order by r.z;
+
 drop function f_same;
 drop serial s_cnt;
-drop table t_key, t_left, t_right, t_tree, t_big;
+drop serial s_bm;
+drop serial s_sel;
+drop table t_ref;
+drop table t_key, t_left, t_right, t_tree, t_big, t_obj;
