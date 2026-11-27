@@ -80,7 +80,7 @@ Query stmt:
 select count(*) from ta ta anti join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.ca
 ===================================================
     
-Case 2: NOT EXISTS whose table joined to the outer query is not the first in the subquery FROM     
+Case 2: NOT EXISTS whose table joined to the outer query is the second in the subquery FROM     
 
 ===================================================
 count(*)    
@@ -220,7 +220,7 @@ Query stmt:
 select count(*) from ta ta semi join (select tb.ca, tc.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?, av_?) on (av?.av_?<ta.ca+?) and ta.ca=av?.av_?
 ===================================================
     
-Case 6: the subquery joins its tables with JOIN ... ON     
+Case 6: the subquery joins its tables with JOIN ... ON or LEFT JOIN ... ON     
 
 ===================================================
 count(*)    
@@ -251,6 +251,66 @@ nl-join (semi join)
     cost:  ? card ?
 Query stmt:
 select count(*) from ta ta semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.ca
+===================================================
+count(*)    
+3     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select tb.ca from tb tb left outer join tc tc on tb.cb=tc.ca)
+Query plan:
+nl-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta semi join (select tb.ca from tb tb left outer join tc tc on tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.ca
+===================================================
+count(*)    
+1     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
+               sargs: term[?]
+               cost:  ? card ?
+    after: term[?]
+    cost:  ? card ?
+Query stmt:
+(select tb.ca from tb tb left outer join tc tc on tb.cb=tc.ca where tc.ca is null )
+Query plan:
+nl-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta semi join (select tb.ca from tb tb left outer join tc tc on tb.cb=tc.ca where tc.ca is null ) av? (av_?) on av?.av_?=ta.ca
 ===================================================
     
 Case 7: a hint of the subquery (ORDERED) stays inside the derived table     
@@ -376,6 +436,30 @@ Case 9: USING INDEX ... KEYLIMIT keeps the subquery nested
 ca    
 3     
 
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: tg node[?]
+               index: i_tg_ca term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: th node[?]
+               index: i_th_ca keylimit ? term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from tg tg, th th where tg.ca=tf.ca and tg.cb=th.ca and (th.ca> ?:? ) and inst_num()<= ?:?  using index th.i_th_ca keylimit  ?:? )
+Query plan:
+sscan
+    class: tf node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select tf.ca from tf tf where  exists (select ? from tg tg, th th where tg.ca=tf.ca and tg.cb=th.ca and (th.ca> ?:? ) and inst_num()<= ?:?  using index th.i_th_ca keylimit  ?:? )
 ===================================================
     
 Case 10: a large indexed outer: the derived table is read first with DISTINCT     
@@ -418,5 +502,151 @@ idx-join (inner join)
     cost:  ? card ?
 Query stmt:
 select count(*) from t_big t_big semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=t_big.ca
+===================================================
+    
+Case 11: NOT EXISTS with a condition on the outer table alone stays nested     
+
+===================================================
+count(*)    
+2     
+
+===================================================
+    
+Case 12: a subquery reading a derived table or a CTE stays nested     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: tc node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select tc.ca from tc tc group by tc.ca)
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tb node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from tb tb, (select tc.ca from tc tc group by tc.ca) d (ca) where tb.ca=ta.ca and (tb.cb=d.ca) and inst_num()<= ?:? )
+Query plan:
+sscan
+    class: ta node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta where  exists (select ? from tb tb, (select tc.ca from tc tc group by tc.ca) d (ca) where tb.ca=ta.ca and (tb.cb=d.ca) and inst_num()<= ?:? )
+===================================================
+count(*)    
+2     
+
+Query plan:
+sscan
+    class: tc node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ MATERIALIZE */ tc.ca from tc tc
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tb node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               simple CTE:w node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(with w(ca) as (select /*+ MATERIALIZE */ tc.ca from tc tc)select ? from tb tb, w w where tb.ca=ta.ca and (tb.cb=w.ca) and inst_num()<= ?:? )
+Query plan:
+sscan
+    class: ta node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta where  exists (with w(ca) as (select /*+ MATERIALIZE */ tc.ca from tc tc)select ? from tb tb, w w where tb.ca=ta.ca and (tb.cb=w.ca) and inst_num()<= ?:? )
+===================================================
+    
+Case 13: NOT IN on a NOT NULL column of the NULL-filled side of a LEFT JOIN stays nested     
+
+===================================================
+0
+===================================================
+2
+===================================================
+count(*)    
+0     
+
+===================================================
+    
+Case 14: EXISTS and NOT EXISTS over several tables in one WHERE     
+
+===================================================
+count(*)    
+1     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select tb.ca from tb tb, tc tc where tb.cb=tc.ca)
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: tb node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select tb.ca from tb tb, tc tc where tb.cb= ?:?  and tc.ca= ?:?  and tb.cb=tc.ca)
+Query plan:
+nl-join (semi join)
+    edge:  term[?]
+    outer: nl-join (anti join)
+               edge:  term[?]
+               outer: sscan
+                          class: ta node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: av?_? node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.ca anti join (select tb.ca from tb tb, tc tc where tb.cb= ?:?  and tc.ca= ?:?  and tb.cb=tc.ca) av?_? (av_?) on av?_?.av_?=ta.ca
 ===================================================
 0
