@@ -2,6 +2,6 @@ autocommit off;
 create class foo (a int unique);
 insert into foo values(1);
 insert into foo values(2);
-select * from foo;
+select * from foo order by a;
 rollback work;
 rollback;
