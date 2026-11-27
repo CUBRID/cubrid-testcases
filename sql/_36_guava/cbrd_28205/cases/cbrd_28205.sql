@@ -76,11 +76,27 @@
  *                LEFT JOIN after it, primary key table with a subclass, ALL with a subclass
  *    Case 90-92: eliminated: superclass without the primary key, foreign key inherited by the child,
  *                partitioned primary key table
+ *    Case 93-101: a plan with the primary key table eliminated is cached, then the primary key table gets a
+ *                subclass with a value only in it: prepared join after CREATE TABLE ... UNDER and after ALTER
+ *                TABLE ... ADD SUPERCLASS, multi-table UPDATE and DELETE run again, a cached user query of the
+ *                same shape as the rewritten join, scalar subquery, view, two primary key tables, and a control
+ *                with DDL and DML that keep the result
+ *    Case 102:   Case 93 with BIND_SENSITIVE, executed after the DDL with a value that makes it plan again
+ *
+ *  A plan with the primary key table eliminated did not read that table, so it was not dropped from the plan
+ *  cache when the table changed, and a prepared statement or the same statement run again kept the elimination
+ *  after the table got a subclass. Now the eliminated table stays in the class list of the plan, and the text
+ *  that keys the plan cache marks it, so such a change compiles the statement again.
  */
 
 drop table if exists t28205_m, t28205_n, t28205_o, t28205_x, t28205_y, t28205_z, t28205_a, t28205_b, t28205_c, t28205_d, t28205_bi;
 drop table if exists t28205_hf, t28205_hc, t28205_hp, t28205_hq, t28205_hs, t28205_hd, t28205_hu, t28205_ht, t28205_he, t28205_hl, t28205_hn, t28205_pc, t28205_pp;
 drop table if exists t28205_a2, t28205_km, t28205_ka, t28205_kan, t28205_kan2, t28205_kc2, t28205_kb, t28205_kb2, t28205_kc, t28205_kd;
+drop view if exists t28205_v99;
+drop table if exists t28205_c93, t28205_s93, t28205_p93, t28205_c94, t28205_o94, t28205_p94, t28205_c95, t28205_s95, t28205_p95;
+drop table if exists t28205_c96, t28205_s96, t28205_p96, t28205_c97, t28205_s97, t28205_p97, t28205_c98, t28205_s98, t28205_p98;
+drop table if exists t28205_c99, t28205_s99, t28205_p99, t28205_c100, t28205_s100, t28205_p100, t28205_q100, t28205_c101, t28205_p101;
+drop table if exists t28205_c102, t28205_s102, t28205_p102;
 
 create table t28205_m (a int);
 create table t28205_n (a int, b int);
@@ -455,6 +471,150 @@ evaluate 'Case 92: partitioned primary key table, eliminated; expected (1) (2) (
 --@queryplan
 select c.id from t28205_pc c, t28205_pp p where c.pid = p.id order by 1;
 
+evaluate 'Case 93: prepared join with the primary key table eliminated, then CREATE TABLE ... UNDER the primary key table with a value only in the subclass; expected (1) before and after';
+create table t28205_p93 (id int primary key);
+create table t28205_c93 (id int, pid int, foreign key (pid) references t28205_p93 (id));
+insert into t28205_p93 values (1);
+insert into t28205_c93 values (1, 1), (4, null);
+prepare s93 from 'select c.id from t28205_c93 c, t28205_p93 p where c.pid = p.id order by 1';
+execute s93;
+create table t28205_s93 under t28205_p93 (z int);
+insert into t28205_s93 (id, z) values (7, 7);
+insert into t28205_c93 values (7, 7);
+execute s93;
+deallocate prepare s93;
+
+evaluate 'Case 94: Case 93 with ALTER TABLE ... ADD SUPERCLASS the primary key table; expected (1) before and after';
+create table t28205_p94 (id int primary key);
+create table t28205_c94 (id int, pid int, foreign key (pid) references t28205_p94 (id));
+insert into t28205_p94 values (1);
+insert into t28205_c94 values (1, 1), (4, null);
+create table t28205_o94 (z int);
+prepare s94 from 'select c.id from t28205_c94 c, t28205_p94 p where c.pid = p.id order by 1';
+execute s94;
+alter table t28205_o94 add superclass t28205_p94;
+insert into t28205_o94 (id, z) values (7, 7);
+insert into t28205_c94 values (7, 7);
+execute s94;
+deallocate prepare s94;
+
+evaluate 'Case 95: multi-table UPDATE with the primary key table eliminated, run again after the primary key table gets a subclass; expected (1, 2) (4, 0) (7, 0)';
+create table t28205_p95 (id int primary key);
+create table t28205_c95 (id int, pid int, v int, foreign key (pid) references t28205_p95 (id));
+insert into t28205_p95 values (1);
+insert into t28205_c95 values (1, 1, 0), (4, null, 0);
+update t28205_c95 c, t28205_p95 p set c.v = c.v + 1 where c.pid = p.id;
+create table t28205_s95 under t28205_p95 (z int);
+insert into t28205_s95 (id, z) values (7, 7);
+insert into t28205_c95 values (7, 7, 0);
+update t28205_c95 c, t28205_p95 p set c.v = c.v + 1 where c.pid = p.id;
+select id, v from t28205_c95 order by 1;
+
+evaluate 'Case 96: multi-table DELETE with the primary key table eliminated, run again after the primary key table gets a subclass; expected (1) (4) (7)';
+create table t28205_p96 (id int primary key);
+create table t28205_c96 (id int, pid int, v int, foreign key (pid) references t28205_p96 (id));
+insert into t28205_p96 values (1);
+insert into t28205_c96 values (1, 1, 0), (4, null, 0);
+delete c from t28205_c96 c, t28205_p96 p where c.pid = p.id and c.v = 9;
+create table t28205_s96 under t28205_p96 (z int);
+insert into t28205_s96 (id, z) values (7, 7);
+insert into t28205_c96 values (7, 7, 9);
+delete c from t28205_c96 c, t28205_p96 p where c.pid = p.id and c.v = 9;
+select id from t28205_c96 order by 1;
+
+evaluate 'Case 97: a user query of the same shape as the rewritten join is cached first, then Case 93; expected (1) (1) before and (1) after';
+create table t28205_p97 (id int primary key);
+create table t28205_c97 (id int, pid int, foreign key (pid) references t28205_p97 (id));
+insert into t28205_p97 values (1);
+insert into t28205_c97 values (1, 1), (4, null);
+select c.id from t28205_c97 c where c.pid is not null order by 1;
+prepare s97 from 'select c.id from t28205_c97 c, t28205_p97 p where c.pid = p.id order by 1';
+execute s97;
+create table t28205_s97 under t28205_p97 (z int);
+insert into t28205_s97 (id, z) values (7, 7);
+insert into t28205_c97 values (7, 7);
+execute s97;
+deallocate prepare s97;
+
+evaluate 'Case 98: Case 93 with the join in a scalar subquery; expected (1) before and after';
+create table t28205_p98 (id int primary key);
+create table t28205_c98 (id int, pid int, foreign key (pid) references t28205_p98 (id));
+insert into t28205_p98 values (1);
+insert into t28205_c98 values (1, 1), (4, null);
+prepare s98 from 'select (select count(*) from t28205_c98 c, t28205_p98 p where c.pid = p.id) from db_root';
+execute s98;
+create table t28205_s98 under t28205_p98 (z int);
+insert into t28205_s98 (id, z) values (7, 7);
+insert into t28205_c98 values (7, 7);
+execute s98;
+deallocate prepare s98;
+
+evaluate 'Case 99: Case 93 through a view over the join; expected (1) before and after';
+create table t28205_p99 (id int primary key);
+create table t28205_c99 (id int, pid int, foreign key (pid) references t28205_p99 (id));
+insert into t28205_p99 values (1);
+insert into t28205_c99 values (1, 1), (4, null);
+create view t28205_v99 as select c.id from t28205_c99 c, t28205_p99 p where c.pid = p.id;
+prepare s99 from 'select id from t28205_v99 order by 1';
+execute s99;
+create table t28205_s99 under t28205_p99 (z int);
+insert into t28205_s99 (id, z) values (7, 7);
+insert into t28205_c99 values (7, 7);
+execute s99;
+deallocate prepare s99;
+
+evaluate 'Case 100: two primary key tables eliminated, the second one gets a subclass; expected (1) before and after';
+create table t28205_p100 (id int primary key);
+create table t28205_q100 (id int primary key);
+create table t28205_c100 (id int, pid int, qid int, foreign key (pid) references t28205_p100 (id), foreign key (qid) references t28205_q100 (id));
+insert into t28205_p100 values (1);
+insert into t28205_q100 values (1);
+insert into t28205_c100 values (1, 1, 1), (4, null, null);
+prepare s100 from 'select c.id from t28205_c100 c, t28205_p100 p, t28205_q100 q where c.pid = p.id and c.qid = q.id order by 1';
+execute s100;
+create table t28205_s100 under t28205_q100 (z int);
+insert into t28205_s100 (id, z) values (7, 7);
+insert into t28205_c100 values (7, 1, 7);
+execute s100;
+deallocate prepare s100;
+
+evaluate 'Case 101: control, UPDATE STATISTICS, a new column and a new value in the primary key table; expected (1) before and (1) (2) after';
+create table t28205_p101 (id int primary key);
+create table t28205_c101 (id int, pid int, foreign key (pid) references t28205_p101 (id));
+insert into t28205_p101 values (1);
+insert into t28205_c101 values (1, 1), (4, null);
+prepare s101 from 'select c.id from t28205_c101 c, t28205_p101 p where c.pid = p.id order by 1';
+execute s101;
+update statistics on t28205_p101;
+alter table t28205_p101 add column w int;
+insert into t28205_p101 (id) values (2);
+insert into t28205_c101 values (2, 2);
+execute s101;
+deallocate prepare s101;
+
+evaluate 'Case 102: Case 93 with BIND_SENSITIVE, executed after the DDL with a value in another histogram bucket; expected (1) before and after';
+create table t28205_p102 (id int primary key);
+create table t28205_c102 (id int, pid int, foreign key (pid) references t28205_p102 (id));
+insert into t28205_p102 values (1);
+insert into t28205_c102 values (1, 1), (4, null);
+insert into t28205_c102 select rownum + 100, null from db_class a, db_class b limit 2000;
+create index t28205_i102 on t28205_c102 (id);
+update statistics on t28205_c102 with fullscan;
+update statistics on t28205_p102 with fullscan;
+prepare s102 from 'select /*+ BIND_SENSITIVE */ c.id from t28205_c102 c, t28205_p102 p where c.pid = p.id and c.id < ? order by 1';
+execute s102 using 50;
+execute s102 using 60;
+create table t28205_s102 under t28205_p102 (z int);
+insert into t28205_s102 (id, z) values (7, 7);
+insert into t28205_c102 values (7, 7);
+execute s102 using 3000;
+deallocate prepare s102;
+
 drop table if exists t28205_m, t28205_n, t28205_o, t28205_x, t28205_y, t28205_z, t28205_a, t28205_b, t28205_c, t28205_d, t28205_bi;
 drop table if exists t28205_hf, t28205_hc, t28205_hp, t28205_hq, t28205_hs, t28205_hd, t28205_hu, t28205_ht, t28205_he, t28205_hl, t28205_hn, t28205_pc, t28205_pp;
 drop table if exists t28205_a2, t28205_km, t28205_ka, t28205_kan, t28205_kan2, t28205_kc2, t28205_kb, t28205_kb2, t28205_kc, t28205_kd;
+drop view if exists t28205_v99;
+drop table if exists t28205_c93, t28205_s93, t28205_p93, t28205_c94, t28205_o94, t28205_p94, t28205_c95, t28205_s95, t28205_p95;
+drop table if exists t28205_c96, t28205_s96, t28205_p96, t28205_c97, t28205_s97, t28205_p97, t28205_c98, t28205_s98, t28205_p98;
+drop table if exists t28205_c99, t28205_s99, t28205_p99, t28205_c100, t28205_s100, t28205_p100, t28205_q100, t28205_c101, t28205_p101;
+drop table if exists t28205_c102, t28205_s102, t28205_p102;
