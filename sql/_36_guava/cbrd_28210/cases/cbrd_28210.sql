@@ -11,7 +11,8 @@
  *    Case 4: a derived table with a numbering column is not merged when the main query reads the column
  *            with DISTINCT/aggregate, a comparison with a column, ROWNUM/LIMIT or GROUP BY, nor a subquery
  *            which drops its leading rows by its own numbering (LIMIT n, m) under a numbering of the main
- *            query. An upper bound on the numbering is still merged
+ *            query, nor a numbering column read by a query nested in the main query. An upper bound
+ *            on the numbering, and ROWNUM read with another column by an aggregate, are still merged
  *    Case 5: WITH CHECK OPTION is enforced when the view is updated through a LEFT JOIN, or when the
  *            view is not merged (NO_MERGE, RIGHT JOIN, nested views, renamed columns)
  *    Case 6: a WHERE term on a column which assigns a session variable is not pushed into the derived
@@ -19,7 +20,7 @@
  */
 
 drop view if exists v_in, v_ex, v_ord, v_rn, v_rownum, v_chk, v_chk_as, v_chk_nm, v_chk_nest, v_nochk;
-drop table if exists a1, a2, a3, a4, t_ord, u_ord, w_ord, rp, r1, rt5, ro3, u1, u2, sv;
+drop table if exists a1, a2, a3, a4, t_ord, u_ord, w_ord, rp, r1, rt5, ro3, r_runner, r_prize, u1, u2, sv;
 
 
 evaluate 'Case 1: SEMI/ANTI JOIN inner view followed by a LEFT JOIN; result = NO_MERGE';
@@ -139,6 +140,20 @@ select o.k, (select count(*) from (select rownum rn from rt5) x where x.rn <= o.
 show trace;
 set trace off;
 
+-- a numbering column read by a query nested in the main query, result = NO_MERGE
+create table r_runner (id int primary key, name varchar(20), finished int);
+insert into r_runner values (1, 'a', 1), (2, 'b', 0), (3, 'c', 1), (4, 'd', 1);
+create table r_prize (rank_no int, prize varchar(20));
+insert into r_prize values (1, 'gold'), (2, 'silver'), (3, 'bronze');
+select v.name, (select p.prize from r_prize p where p.rank_no = v.rn) prize from (select rownum rn, name from r_runner where finished = 1) v order by v.rn;
+select v.name, (select p.prize from r_prize p where p.rank_no = v.rn) prize from (select /*+ NO_MERGE */ rownum rn, name from r_runner where finished = 1) v order by v.rn;
+-- ROWNUM is given before the sort, so an aggregate reading it with another column is still merged (rewritten query in the trace)
+set trace on;
+select max(rn), sum(id * rn) from (select rownum rn, id from rp order by k) x;
+show trace;
+set trace off;
+select max(rn), sum(id * rn) from (select /*+ NO_MERGE */ rownum rn, id from rp order by k) x;
+
 
 evaluate 'Case 5: WITH CHECK OPTION of a view updated through a join';
 create table u1 (id int primary key, a int, x int) dont_reuse_oid;
@@ -193,5 +208,5 @@ select @c;
 
 
 drop view if exists v_in, v_ex, v_ord, v_rn, v_rownum, v_chk, v_chk_as, v_chk_nm, v_chk_nest, v_nochk;
-drop table if exists a1, a2, a3, a4, t_ord, u_ord, w_ord, rp, r1, rt5, ro3, u1, u2, sv;
+drop table if exists a1, a2, a3, a4, t_ord, u_ord, w_ord, rp, r1, rt5, ro3, r_runner, r_prize, u1, u2, sv;
 drop variable @c;
