@@ -5,7 +5,8 @@
  *  A function-index expression in a condition is bound to the list column that carries its value, found by the printed
  *  form of the expression. The printed form qualifies a column by its table name, not by its alias, so in a self join
  *  the expressions of both tables printed the same and both were bound to one column. A condition such as
- *  abs(y.cb) > abs(x.cb) then compared a value with itself.
+ *  abs(y.cb) > abs(x.cb) then compared a value with itself. The output list of GROUP BY is bound the same way, so
+ *  Case 9 failed under any join method.
  *
  *  Each case runs one query as a hash join, with its plan, and the same query as a nested loop join. The two results
  *  must match.
@@ -24,7 +25,8 @@
 
 drop table if exists ta, tb;
 
--- the data and the index of the issue: cd < 100 reads 99 rows through the index, which carries abs(cb) or lower(cb)
+-- ta has the data and the index of the issue, tb the same with a string column for lower(). cd < 100 reads 99 rows
+-- through the index, which carries abs(cb) or lower(cb)
 create table ta (ca int primary key, cb int, cc int, cd int);
 insert into ta select rownum, mod(rownum, 11) - 5, mod(rownum * 13, 50), rownum from db_class a, db_class b limit 3000;
 create index i_ta on ta (cd, abs(cb), cc);
