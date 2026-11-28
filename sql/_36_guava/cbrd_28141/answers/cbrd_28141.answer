@@ -197,7 +197,7 @@ count(*)    sum( cast(c as bigint))    min(b)    max(b)
 Query plan:
 iscan
     class: t_pre node[?]
-    index: i_pre_ab term[?]
+    index: i_pre_ab term[?] (bitmap heap scan)
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
@@ -671,7 +671,7 @@ temp(order by)
                  subplan: idx-join (inner join)
                               outer: iscan
                                          class: o node[?]
-                                         index: i_mix_as term[?]
+                                         index: i_mix_as term[?] (bitmap heap scan)
                                          cost:  ? card ?
                               inner: iscan
                                          class: i node[?]
