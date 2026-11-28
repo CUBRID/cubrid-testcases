@@ -17,6 +17,16 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
 20000
 ===================================================
 20000
@@ -33,7 +43,19 @@
 ===================================================
 100
 ===================================================
+2000
+===================================================
+2000
+===================================================
+40000
+===================================================
+40000
+===================================================
 0
+===================================================
+    
+Case 1: hash-join by cost without a hint - inner, left outer and right outer join     
+
 ===================================================
 count(*)    sum(a.id)    sum(b.id)    
 80000     800040000     800040000     
@@ -85,6 +107,10 @@ hash-join (right outer join)
 Query stmt:
 select count(*), sum(a.id), sum(b.id), count(a.id) from t_big? a right outer join t_big? b on (a.id> ?:? ) and a.k=b.k
 ===================================================
+    
+Case 2: small inputs stay on nl-join, USE_HASH forces hash-join     
+
+===================================================
 count(*)    sum(a.id)    sum(b.id)    
 400     20200     19300     
 
@@ -117,6 +143,10 @@ hash-join (inner join)
     cost:  ? card ?
 Query stmt:
 select /*+ USE_HASH */ count(*), sum(a.id), sum(b.id) from t_small? a, t_small? b where a.k=b.k
+===================================================
+    
+Case 3: hints beat the cost - NO_USE_HASH and USE_NL give nl-join, USE_MERGE gives m-join     
+
 ===================================================
 count(*)    sum(a.id)    sum(b.id)    
 8000     8004000     8004000     
@@ -193,6 +223,10 @@ temp
 Query stmt:
 select /*+ USE_MERGE */ count(*), sum(a.id), sum(b.id) from t_hint? a, t_hint? b where a.k=b.k
 ===================================================
+    
+Case 4: m-join enabled by the parameter still loses to the hash-join by cost     
+
+===================================================
 0
 ===================================================
 count(*)    sum(a.id)    sum(b.id)    
@@ -212,6 +246,10 @@ Query stmt:
 select count(*), sum(a.id), sum(b.id) from t_big? a, t_big? b where a.k=b.k
 ===================================================
 0
+===================================================
+    
+Case 5: spill cost - hash-join while the build fits in memory, idx-join when it does not     
+
 ===================================================
 count(*)    
 48000     
@@ -248,6 +286,10 @@ Query stmt:
 select count(*) from t_mid a, t_idx b where a.k=b.k
 ===================================================
 0
+===================================================
+    
+Case 6: right outer join honors the join-method hints read from the null-supplying table     
+
 ===================================================
 count(*)    sum(a.id)    sum(b.id)    count(a.id)    
 4000     6002000     4002000     4000     
@@ -398,6 +440,23 @@ count(*)    sum(a.id)    sum(b.id)    count(a.id)
 420     20200     20490     400     
 
 Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(a.id), sum(b.id), count(a.id) from t_small? a right outer join t_small? b on a.k=b.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    count(a.id)    
+420     20200     20490     400     
+
+Query plan:
 hash-join (right outer join)
     edge:  term[?]
     outer: sscan
@@ -409,6 +468,10 @@ hash-join (right outer join)
     cost:  ? card ?
 Query stmt:
 select /*+ USE_HASH */ count(*), sum(a.id), sum(b.id), count(a.id) from t_small? a right outer join t_small? b on a.k=b.k
+===================================================
+    
+Case 7: USE_HASH applies to a right outer join whose null-supplying side is a join     
+
 ===================================================
 count(*)    sum(a.id)    sum(b.id)    count(c.id)    
 400     19300     19300     400     
@@ -457,5 +520,627 @@ nl-join (left outer join)
     cost:  ? card ?
 Query stmt:
 select count(*), sum(a.id), sum(b.id), count(c.id) from t_small? a inner join t_small? b on a.id=b.id right outer join t_small? c on c.k=b.k
+===================================================
+    
+Case 8: NULL keys, repeated keys and keys without a match - hash-join by cost, same rows as nl-join     
+
+===================================================
+count(*)    count(a.k)    count(b.k)    sum(a.id)    sum(b.id)    sum( cast(a.id as bigint)*b.id)    
+7360     7360     7360     7360000     7306000     7319574000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), count(a.k), count(b.k), sum(a.id), sum(b.id), sum( cast(a.id as bigint)* cast(b.id as bigint)) from t_nula a, t_nulb b where a.k=b.k
+===================================================
+count(*)    count(a.k)    count(b.k)    sum(a.id)    sum(b.id)    sum( cast(a.id as bigint)*b.id)    
+7360     7360     7360     7360000     7306000     7319574000     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ count(*), count(a.k), count(b.k), sum(a.id), sum(b.id), sum( cast(a.id as bigint)* cast(b.id as bigint)) from t_nula a, t_nulb b where a.k=b.k
+===================================================
+count(*)    count(a.k)    count(b.k)    sum(a.id)    sum(b.id)    sum( cast(a.id as bigint)*b.id)    
+7520     7420     7360     7521000     7306000     7319574000     
+
+Query plan:
+hash-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), count(a.k), count(b.k), sum(a.id), sum(b.id), sum( cast(a.id as bigint)* cast(b.id as bigint)) from t_nula a left outer join t_nulb b on a.k=b.k
+===================================================
+count(*)    count(a.k)    count(b.k)    sum(a.id)    sum(b.id)    sum( cast(a.id as bigint)*b.id)    
+7520     7420     7360     7521000     7306000     7319574000     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ count(*), count(a.k), count(b.k), sum(a.id), sum(b.id), sum( cast(a.id as bigint)* cast(b.id as bigint)) from t_nula a left outer join t_nulb b on a.k=b.k
+===================================================
+count(*)    count(a.k)    count(b.k)    sum(a.id)    sum(b.id)    sum( cast(a.id as bigint)*b.id)    
+7888     7360     7808     7360000     7845800     7319574000     
+
+Query plan:
+hash-join (right outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), count(a.k), count(b.k), sum(a.id), sum(b.id), sum( cast(a.id as bigint)* cast(b.id as bigint)) from t_nula a right outer join t_nulb b on a.k=b.k
+===================================================
+count(*)    count(a.k)    count(b.k)    sum(a.id)    sum(b.id)    sum( cast(a.id as bigint)*b.id)    
+7888     7360     7808     7360000     7845800     7319574000     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ count(*), count(a.k), count(b.k), sum(a.id), sum(b.id), sum( cast(a.id as bigint)* cast(b.id as bigint)) from t_nula a right outer join t_nulb b on a.k=b.k
+===================================================
+    
+Case 9: hash-join by cost on a VARCHAR join key, same rows as nl-join     
+
+===================================================
+count(*)    count(a.kv)    count(b.kv)    sum(a.id)    sum(b.id)    sum( cast(a.id as bigint)*b.id)    
+7360     7360     7360     7360000     7306000     7319574000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), count(a.kv), count(b.kv), sum(a.id), sum(b.id), sum( cast(a.id as bigint)* cast(b.id as bigint)) from t_nula a, t_nulb b where a.kv=b.kv
+===================================================
+count(*)    count(a.kv)    count(b.kv)    sum(a.id)    sum(b.id)    sum( cast(a.id as bigint)*b.id)    
+7360     7360     7360     7360000     7306000     7319574000     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ count(*), count(a.kv), count(b.kv), sum(a.id), sum(b.id), sum( cast(a.id as bigint)* cast(b.id as bigint)) from t_nula a, t_nulb b where a.kv=b.kv
+===================================================
+    
+Case 10: hash-joins by cost under GROUP BY and in a three-table join, same rows as nl-join     
+
+===================================================
+g    count(*)    sum(a.id)    sum(b.id)    
+0     1060     1060520     825360     
+1     1060     1059480     976640     
+2     1060     1053820     1127260     
+3     1040     1036160     1254880     
+4     1040     1040000     884000     
+5     1040     1043840     1033120     
+6     1060     1066180     1204740     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: hash-join (inner join)
+                              edge:  term[?]
+                              outer: sscan
+                                         class: a node[?]
+                                         cost:  ? card ?
+                              inner: sscan
+                                         class: b node[?]
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select  mod(b.k, ?), count(*), sum(a.id), sum(b.id) from t_nula a, t_nulb b where a.k=b.k group by  mod(b.k, ?) order by ?
+===================================================
+g    count(*)    sum(a.id)    sum(b.id)    
+0     1060     1060520     825360     
+1     1060     1059480     976640     
+2     1060     1053820     1127260     
+3     1040     1036160     1254880     
+4     1040     1040000     884000     
+5     1040     1043840     1033120     
+6     1060     1066180     1204740     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: nl-join (inner join)
+                              edge:  term[?]
+                              outer: sscan
+                                         class: a node[?]
+                                         cost:  ? card ?
+                              inner: sscan
+                                         class: b node[?]
+                                         sargs: term[?]
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */  mod(b.k, ?), count(*), sum(a.id), sum(b.id) from t_nula a, t_nulb b where a.k=b.k group by  mod(b.k, ?) order by ?
+===================================================
+count(*)    sum(a.id)    sum(b.id)    sum(c.id)    
+29440     29440000     29224000     27968000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(a.id), sum(b.id), sum(c.id) from t_nula a, t_nulb b, t_hint? c where a.k=b.k and b.k=c.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    sum(c.id)    
+29440     29440000     29224000     27968000     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ count(*), sum(a.id), sum(b.id), sum(c.id) from t_nula a, t_nulb b, t_hint? c where a.k=b.k and b.k=c.k
+===================================================
+    
+Case 11: the filter on one side switches the same join between hash-join and idx-join     
+
+===================================================
+count(*)    sum(a.id)    sum(b.id)    
+48000     288024000     476028000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(a.id), sum(b.id) from t_mid a, t_idx b where a.k=b.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    
+48000     288024000     476028000     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: i_t_idx_k term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ count(*), sum(a.id), sum(b.id) from t_mid a, t_idx b where a.k=b.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    
+4000     2002000     37334000     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: i_t_idx_k term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(a.id), sum(b.id) from t_mid a, t_idx b where a.k=b.k and (a.id<= ?:? )
+===================================================
+count(*)    sum(a.id)    sum(b.id)    
+4000     2002000     37334000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*), sum(a.id), sum(b.id) from t_mid a, t_idx b where a.k=b.k and (a.id<= ?:? )
+===================================================
+count(*)    sum(a.id)    sum(b.id)    
+116     600540     1090180     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: i_t_idx_k term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(a.id), sum(b.id) from t_mid a, t_idx b where a.k=b.k and (b.k< ?:? )
+===================================================
+count(*)    sum(a.id)    sum(b.id)    
+116     600540     1090180     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: i_t_idx_k term[?]
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ count(*), sum(a.id), sum(b.id) from t_mid a, t_idx b where a.k=b.k and (b.k< ?:? )
+===================================================
+    
+Case 12: hash-join by cost on two VARCHAR keys over index scans on both tables, same rows as nl-join     
+
+===================================================
+count(*)    sum(a.id)    sum(b.id)    sum( cast(a.id as bigint)*b.id)    
+28570     570868570     571594390     11421307498390     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: iscan
+               class: a node[?]
+               index: i_cka_f term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: i_ckb_f term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(a.id), sum(b.id), sum( cast(a.id as bigint)* cast(b.id as bigint)) from t_cka a, t_ckb b where a.ka=b.ka and a.kb=b.kb and b.f= ?:?  and a.f= ?:? 
+===================================================
+count(*)    sum(a.id)    sum(b.id)    sum( cast(a.id as bigint)*b.id)    
+28570     570868570     571594390     11421307498390     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: iscan
+               class: a node[?]
+               index: i_cka_f term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: i_ckb_f term[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ count(*), sum(a.id), sum(b.id), sum( cast(a.id as bigint)* cast(b.id as bigint)) from t_cka a, t_ckb b where a.ka=b.ka and a.kb=b.kb and b.f= ?:?  and a.f= ?:? 
+===================================================
+    
+Case 13: the build spills past 0.8 of max_hash_list_scan_size, sized by the null-supplying input of an outer join     
+
+===================================================
+0
+===================================================
+count(*)    
+48000     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: i_t_idx_k term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_mid a, t_idx b where a.k=b.k
+===================================================
+0
+===================================================
+count(*)    
+48000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_mid a, t_idx b where a.k=b.k
+===================================================
+0
+===================================================
+count(*)    sum(a.id)    sum(b.id)    
+48000     288024000     476028000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(a.id), sum(b.id) from t_idx b, t_mid a where a.k=b.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    
+48000     288024000     476028000     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: i_t_idx_k term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(a.id), sum(b.id) from t_idx b right outer join t_mid a on a.k=b.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    count(b.id)    
+48000     288024000     476028000     48000     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: i_t_idx_k term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(a.id), sum(b.id), count(b.id) from t_mid a left outer join t_idx b on a.k=b.k
+===================================================
+0
+===================================================
+count(*)    sum(a.id)    sum(b.id)    
+48000     288024000     476028000     
+
+Query plan:
+hash-join (right outer join)
+    edge:  term[?]
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(a.id), sum(b.id) from t_idx b right outer join t_mid a on a.k=b.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    count(b.id)    
+48000     288024000     476028000     48000     
+
+Query plan:
+hash-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(a.id), sum(b.id), count(b.id) from t_mid a left outer join t_idx b on a.k=b.k
+===================================================
+    
+Case 14: right outer join chosen as a hash-join by cost spills at run time, same rows as nl-join     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    count(a.k)    count(b.k)    sum(a.id)    sum(b.id)    sum( cast(a.id as bigint)*b.id)    
+7888     7360     7808     7360000     7845800     7319574000     
+
+Query plan:
+hash-join (right outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*), count(a.k), count(b.k), sum(a.id), sum(b.id), sum( cast(a.id as bigint)* cast(b.id as bigint)) from t_nula a right outer join t_nulb b on a.k=b.k
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (right outer join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), count(a.k), count(b.k), sum(a.id), sum(b.id), sum( cast(a.id as bigint)* cast(b.id as bigint)) from [dba.t_nula] a right outer join [dba.t_nulb] b on a.k=b.k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory+skip)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_nula), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_nulb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    count(a.k)    count(b.k)    sum(a.id)    sum(b.id)    sum( cast(a.id as bigint)*b.id)    
+7888     7360     7808     7360000     7845800     7319574000     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ count(*), count(a.k), count(b.k), sum(a.id), sum(b.id), sum( cast(a.id as bigint)* cast(b.id as bigint)) from t_nula a right outer join t_nulb b on a.k=b.k
+===================================================
+0
+===================================================
+    
+Case 15: right outer join with an empty null-supplying table - hash-join by cost keeps every preserved row, same rows as nl-join     
+
+===================================================
+count(*)    count(a.id)    sum(b.id)    
+2000     0     2001000     
+
+Query plan:
+hash-join (right outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), count(a.id), sum(b.id) from t_empty a right outer join t_hint? b on a.k=b.k
+===================================================
+count(*)    count(a.id)    sum(b.id)    
+2000     0     2001000     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ count(*), count(a.id), sum(b.id) from t_empty a right outer join t_hint? b on a.k=b.k
 ===================================================
 0
