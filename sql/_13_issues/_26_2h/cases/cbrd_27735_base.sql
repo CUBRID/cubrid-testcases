@@ -1,9 +1,11 @@
 /**
- *  This test case verifies CBRD-27735: partition aggregates (base).
+ *  This test case verifies CBRD-27735: partition aggregates (base: default
+ *  partition order, large partition first, full-size data).
  *  Partition scan transitions must preserve all qualifying values and finish
  *  without a query error or abnormal server termination.
- *  Every result has an independently calculated oracle and NO_PARALLEL_SCAN
- *  reference. Traces check partition order and BUILDVALUE worker tokens.
+ *  Each result is checked against its NO_PARALLEL_SCAN twin; Case 8 is also
+ *  checked against an independently calculated length and MD5.
+ *  Traces check partition order and BUILDVALUE worker tokens.
  *  DISTINCT GROUP_CONCAT uses a nontruncating limit on both paths.
  *  Coverage:
  *    Case 1: Basic aggregates
@@ -13,14 +15,17 @@
  *    Case 5: MEDIAN
  *    Case 6: Ordered DISTINCT GROUP_CONCAT MD5
  *    Case 7: Empty input
+ *    Case 8: Complete ordered non-DISTINCT string on the full data
  */
 
 drop table if exists td;
 set trace on;
 
--- Large partition: 2048 rows doubled seven times, with 192-byte hash padding
--- This is well above the test-mode 32-page floor (target at least 96 pages)
--- Small partition: at most 100 rows and short padding, well below the floor
+-- Large partition: 2048 rows doubled seven times (262,144 rows), with
+-- 192-byte hash padding, about 4165 heap pages - well above the test-mode
+-- 32-page parallel-scan floor; also what Case 8's timing below needs.
+-- Small partition: at most 100 rows and short padding, 1 heap page -
+-- well below the floor
 create table td (id int, v int, pad varchar(200)) partition by range(id) (partition p_big values less than (1000000), partition p_small values less than maxvalue);
 insert into td select 0+rownum, mod(rownum,1000), concat(sha2(cast(rownum as varchar),512),sha2(cast(rownum as varchar),256)) from db_class aa, db_class bb, db_class cc limit 2048;
 insert into td select id+2048, mod(id+2048-0,1000), pad from td;
@@ -77,10 +82,32 @@ select /*+ recompile no_parallel_scan */ md5(group_concat(distinct v order by v 
 show trace;
 
 
-evaluate 'Case 7: Empty input; result = NO_PARALLEL_SCAN';
+-- Case 7 runs the empty input twice. id < 0 is the original form: id is
+-- the partition key, so the scan is pruned to one partition. v < 0 is not
+-- on the partition key, so the scan reads both partitions and still
+-- matches no rows. Neither form reaches the reopen-on-append crash, which
+-- needs a non-empty parallel side (see empty.sql's Case 9).
+evaluate 'Case 7: Empty input, pruned to one partition (id < 0) and over both partitions (v < 0); result = NO_PARALLEL_SCAN';
 select /*+ recompile */ count(*), count(distinct v), sum(distinct v), median(v), length(group_concat(distinct v order by v separator ',')) as concat_length from td where id < 0;
 show trace;
 select /*+ recompile no_parallel_scan */ count(*), count(distinct v), sum(distinct v), median(v), length(group_concat(distinct v order by v separator ',')) as concat_length from td where id < 0;
+show trace;
+select /*+ recompile */ count(*), count(distinct v), sum(distinct v), median(v), length(group_concat(distinct v order by v separator ',')) as concat_length from td where v < 0;
+show trace;
+select /*+ recompile no_parallel_scan */ count(*), count(distinct v), sum(distinct v), median(v), length(group_concat(distinct v order by v separator ',')) as concat_length from td where v < 0;
+show trace;
+
+
+-- The original PR left this case out: CBRD-27926 made GROUP_CONCAT rebuild
+-- its whole accumulated string on every value appended, so a non-DISTINCT
+-- concatenation of all 262,244 rows (about 1 MB of output) ran long enough
+-- to miss the CTP timeout. CBRD-27926 is fixed (develop, 2026-11-09), so
+-- this case is added back. The length and MD5 in the label were computed
+-- outside this engine, by sorting all v values and joining them with ','.
+evaluate 'Case 8: Complete ordered non-DISTINCT string on the full data; result = 1020147, 38afba4a93908d30538aa9baf29839ea';
+select /*+ recompile */ length(group_concat(v order by v separator ',')) as concat_length, md5(group_concat(v order by v separator ',')) as concat_md5 from td;
+show trace;
+select /*+ recompile no_parallel_scan */ length(group_concat(v order by v separator ',')) as concat_length, md5(group_concat(v order by v separator ',')) as concat_md5 from td;
 show trace;
 set trace off;
 set system parameters 'group_concat_max_len=default';

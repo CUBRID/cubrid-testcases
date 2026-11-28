@@ -10,14 +10,18 @@
  *    Case 4: Only serial partition contributes
  *    Case 5: Final parallel partition only
  *    Case 6: Exactly one non-NULL value after an empty parallel pass
+ *    Case 7: PERCENTILE_CONT and PERCENTILE_DISC
+ *    Case 8: A scan that ends on the serial append (parallel/serial/parallel/serial)
  */
 
 drop table if exists td;
 set trace on;
 
--- Large partition: 2048 rows doubled three times, with 192-byte hash padding
--- This is well above the test-mode 32-page floor (target at least 96 pages)
--- Small partition: at most 100 rows and short padding, well below the floor
+-- Large partitions: 2048 rows doubled three times (16,384 rows), with
+-- 192-byte hash padding, about 261 heap pages - well above the test-mode
+-- 32-page parallel-scan floor.
+-- Small partition: at most 100 rows and short padding, 1 heap page - well
+-- below the floor
 create table td (id int, v int, pad varchar(200)) partition by range(id) (partition p_big values less than (1000000), partition p_small values less than (2000000), partition p_last values less than maxvalue);
 insert into td select 0+rownum, mod(rownum,1000), concat(sha2(cast(rownum as varchar),512),sha2(cast(rownum as varchar),256)) from db_class aa, db_class bb, db_class cc limit 2048;
 insert into td select id+2048, mod(id+2048-0,1000), pad from td;
@@ -51,9 +55,9 @@ show trace;
 
 
 evaluate 'Case 4: Only serial partition contributes; result = NO_PARALLEL_SCAN';
-select /*+ recompile */ count(distinct case when id >= 1000000 and id < 2000000 then v end), sum(distinct case when id >= 1000000 and id < 2000000 then v end), cast(median(case when id >= 1000000 and id < 2000000 then v end) as numeric(20,6)) from td;
+select /*+ recompile */ count(distinct case when id >= 1000000 and id < 2000000 then v end), sum(distinct case when id >= 1000000 and id < 2000000 then v end), cast(median(case when id >= 1000000 and id < 2000000 then v end) as numeric(20,6)), md5(group_concat(case when id >= 1000000 and id < 2000000 then v end order by 1 separator ',')) as concat_md5 from td;
 show trace;
-select /*+ recompile no_parallel_scan */ count(distinct case when id >= 1000000 and id < 2000000 then v end), sum(distinct case when id >= 1000000 and id < 2000000 then v end), cast(median(case when id >= 1000000 and id < 2000000 then v end) as numeric(20,6)) from td;
+select /*+ recompile no_parallel_scan */ count(distinct case when id >= 1000000 and id < 2000000 then v end), sum(distinct case when id >= 1000000 and id < 2000000 then v end), cast(median(case when id >= 1000000 and id < 2000000 then v end) as numeric(20,6)), md5(group_concat(case when id >= 1000000 and id < 2000000 then v end order by 1 separator ',')) as concat_md5 from td;
 show trace;
 
 
@@ -65,10 +69,43 @@ show trace;
 
 
 evaluate 'Case 6: Exactly one non-NULL serial value; result = NO_PARALLEL_SCAN';
-select /*+ recompile */ count(distinct case when id = 1000001 then v end), sum(distinct case when id = 1000001 then v end), median(case when id = 1000001 then v end) from td;
+select /*+ recompile */ count(distinct case when id = 1000001 then v end), sum(distinct case when id = 1000001 then v end), median(case when id = 1000001 then v end), group_concat(case when id = 1000001 then v end order by 1 separator ',') as concat_value from td;
 show trace;
-select /*+ recompile no_parallel_scan */ count(distinct case when id = 1000001 then v end), sum(distinct case when id = 1000001 then v end), median(case when id = 1000001 then v end) from td;
+select /*+ recompile no_parallel_scan */ count(distinct case when id = 1000001 then v end), sum(distinct case when id = 1000001 then v end), median(case when id = 1000001 then v end), group_concat(case when id = 1000001 then v end order by 1 separator ',') as concat_value from td;
+show trace;
+
+
+evaluate 'Case 7: PERCENTILE_CONT and PERCENTILE_DISC; result = NO_PARALLEL_SCAN';
+select /*+ recompile */ cast(percentile_cont(0.3) within group (order by v) as numeric(20,6)) as p_cont, percentile_disc(0.3) within group (order by v) as p_disc from td;
+show trace;
+select /*+ recompile no_parallel_scan */ cast(percentile_cont(0.3) within group (order by v) as numeric(20,6)) as p_cont, percentile_disc(0.3) within group (order by v) as p_disc from td;
+show trace;
+drop table td;
+
+
+-- td above ends its scan on a parallel partition (p_last); the engine's
+-- reopen-for-append only runs between a parallel partition and the next
+-- one, so this table ends on a serial partition instead (big, small, big,
+-- small) to also cover a scan whose last pass is the serial append itself.
+-- pa_big and pc_big: 16,384 rows each, about 261 heap pages, above the
+-- 32-page floor. pb_small and pd_small: 100 rows each, 1 heap page, below it.
+drop table if exists td_ends;
+create table td_ends (id int, v int, pad varchar(200)) partition by range(id) (partition pa_big values less than (1000000), partition pb_small values less than (1000101), partition pc_big values less than (2000000), partition pd_small values less than maxvalue);
+insert into td_ends select 0+rownum, mod(rownum,1000), concat(sha2(cast(rownum as varchar),512),sha2(cast(rownum as varchar),256)) from db_class aa, db_class bb, db_class cc limit 2048;
+insert into td_ends select id+2048, mod(id+2048-0,1000), pad from td_ends where id <= 2048;
+insert into td_ends select id+4096, mod(id+4096-0,1000), pad from td_ends where id <= 4096;
+insert into td_ends select id+8192, mod(id+8192-0,1000), pad from td_ends where id <= 8192;
+insert into td_ends select 1000000+rownum, 5000+rownum, 's' from db_class aa, db_class bb limit 100;
+insert into td_ends select id+1000100, mod(id+1000100-1000100,1000), pad from td_ends where id <= 16384;
+insert into td_ends select 2000000+rownum, 15000+rownum, 's' from db_class aa, db_class bb limit 100;
+update statistics on td_ends with fullscan;
+set system parameters 'group_concat_max_len=4194304';
+
+evaluate 'Case 8: Parallel, serial, parallel, serial - scan ends on the serial append; result = NO_PARALLEL_SCAN';
+select /*+ recompile */ count(*), count(distinct v), sum(distinct v), cast(median(v) as numeric(20,6)), md5(group_concat(distinct v order by v separator ',')) as concat_md5 from td_ends;
+show trace;
+select /*+ recompile no_parallel_scan */ count(*), count(distinct v), sum(distinct v), cast(median(v) as numeric(20,6)), md5(group_concat(distinct v order by v separator ',')) as concat_md5 from td_ends;
 show trace;
 set trace off;
 set system parameters 'group_concat_max_len=default';
-drop table td;
+drop table td_ends;

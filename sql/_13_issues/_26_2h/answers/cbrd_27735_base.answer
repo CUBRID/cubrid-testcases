@@ -286,7 +286,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 7: Empty input; result = NO_PARALLEL_SCAN     
+Case 7: Empty input, pruned to one partition (id < 0) and over both partitions (v < 0); result = NO_PARALLEL_SCAN     
 
 ===================================================
 count(*)    count(distinct v)    sum(distinct v)    median(v)    concat_length    
@@ -323,6 +323,88 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    count(distinct v)    sum(distinct v)    median(v)    concat_length    
+0     0     null     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select count(*), count(distinct [dba.td].v), sum(distinct [dba.td].v), median([dba.td].v),  char_length(group_concat(distinct [dba.td].v order by ? separator ',')) from [dba.td] [dba.td] where ([dba.td].v< ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    count(distinct v)    sum(distinct v)    median(v)    concat_length    
+0     0     null     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), count(distinct [dba.td].v), sum(distinct [dba.td].v), median([dba.td].v),  char_length(group_concat(distinct [dba.td].v order by ? separator ',')) from [dba.td] [dba.td] where ([dba.td].v< ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 8: Complete ordered non-DISTINCT string on the full data; result = 1020147, 38afba4a93908d30538aa9baf29839ea     
+
+===================================================
+concat_length    concat_md5    
+1020147     38afba4a93908d30538aa9baf29839ea     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select  char_length(group_concat([dba.td].v order by ? separator ',')),  md?(group_concat([dba.td].v order by ? separator ',')) from [dba.td] [dba.td]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+concat_length    concat_md5    
+1020147     38afba4a93908d30538aa9baf29839ea     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */  char_length(group_concat([dba.td].v order by ? separator ',')),  md?(group_concat([dba.td].v order by ? separator ',')) from [dba.td] [dba.td]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
