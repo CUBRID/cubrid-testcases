@@ -47,7 +47,7 @@ Trace Statistics:
     SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
      
 
 ===================================================
@@ -78,7 +78,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
      
 
 ===================================================
@@ -114,13 +114,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
             SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
      
 
@@ -157,13 +157,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
      
 
 ===================================================
@@ -198,7 +198,7 @@ Trace Statistics:
     SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
      
 
 ===================================================
@@ -228,7 +228,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
      
 
 ===================================================
@@ -264,13 +264,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: interpreted data filter)
             SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
      
 
@@ -307,13 +307,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: interpreted data filter)
      
 
 ===================================================
@@ -346,7 +346,7 @@ Trace Statistics:
     SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
      
 
 ===================================================
@@ -374,7 +374,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
      
 
 ===================================================
@@ -410,13 +410,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: interpreted data filter)
             SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
      
 
@@ -453,13 +453,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: interpreted data filter)
      
 
 ===================================================
@@ -491,7 +491,7 @@ Trace Statistics:
     SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
      
 
 ===================================================
@@ -518,7 +518,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
      
 
 ===================================================
@@ -554,13 +554,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: interpreted data filter)
             SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
      
 
@@ -597,13 +597,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: interpreted data filter)
      
 
 ===================================================
@@ -640,7 +640,7 @@ Trace Statistics:
     SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
      
 
 ===================================================
@@ -672,7 +672,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
      
 
 ===================================================
@@ -708,13 +708,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: interpreted data filter)
             SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
      
 
@@ -751,13 +751,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: interpreted data filter)
      
 
 ===================================================
@@ -794,7 +794,7 @@ Trace Statistics:
     SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
      
 
 ===================================================
@@ -826,7 +826,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
      
 
 ===================================================
@@ -862,13 +862,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
             SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
      
 
@@ -905,13 +905,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
      
 
 ===================================================
@@ -948,7 +948,7 @@ Trace Statistics:
     SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
      
 
 ===================================================
@@ -980,7 +980,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1016,13 +1016,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
             SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
      
 
@@ -1059,13 +1059,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
      
 
 ===================================================
@@ -1102,7 +1102,7 @@ Trace Statistics:
     SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1134,7 +1134,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1170,13 +1170,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
             SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
      
 
@@ -1213,13 +1213,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
      
 
 ===================================================
@@ -1257,7 +1257,7 @@ Trace Statistics:
     SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1288,7 +1288,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1324,13 +1324,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
             SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
      
 
@@ -1367,13 +1367,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
      
 
 ===================================================
@@ -1398,7 +1398,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?, at records off the page: ?, last: visible version off the page))
       SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
      
@@ -1421,7 +1421,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?, at records off the page: ?, last: visible version off the page))
       SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
      
@@ -1453,7 +1453,7 @@ Trace Statistics:
     GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?, at records off the page: ?, last: visible version off the page))
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_wb_inner), (noscan time: ?, fetch: ?, ioread: ?)
@@ -1486,7 +1486,7 @@ Trace Statistics:
     GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?, at records off the page: ?, last: visible version off the page))
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_wb_inner), (noscan time: ?, fetch: ?, ioread: ?)

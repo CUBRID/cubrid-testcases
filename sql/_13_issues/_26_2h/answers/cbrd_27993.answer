@@ -297,7 +297,7 @@ Trace Statistics:
     SCAN (table: dba.t_sq_out), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (correlated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.t_sq_in), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_sq_in), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: filter term with side effect)
      
 
 ===================================================
@@ -475,8 +475,8 @@ Trace Statistics:
           SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
           SUBQUERY (uncorrelated)
             SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-              GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+              SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no column to decode)
+              GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
      
 
 ===================================================
@@ -513,7 +513,7 @@ Trace Statistics:
           SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
           SUBQUERY (uncorrelated)
             SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
               ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
               ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
               ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
@@ -550,12 +550,12 @@ Trace Statistics:
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
       SUBQUERY (correlated)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: grouped, cached, backward or record-info scan)
           SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
-          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (the groups fold little), readrows: ?, rows: ?)
           SUBQUERY (uncorrelated)
             SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
               SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
      
 
@@ -618,7 +618,7 @@ Trace Statistics:
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
       SUBQUERY (correlated)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
             SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
             MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
           SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
@@ -662,9 +662,9 @@ Trace Statistics:
           SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
           SUBQUERY (uncorrelated)
             SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
             SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
             UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
      
 
@@ -701,8 +701,8 @@ Trace Statistics:
           SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           SUBQUERY (uncorrelated)
             SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-              GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+              SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
+              GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
      
 
 ===================================================
@@ -820,7 +820,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
-        SCAN (table: dba.t_sq_in), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_sq_in), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
      
 
 ===================================================

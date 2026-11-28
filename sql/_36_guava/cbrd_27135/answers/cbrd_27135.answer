@@ -24,7 +24,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch pages: ?..? (row path: ?..?))
      
 
 ===================================================
@@ -66,7 +66,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch pages: ?..? (row path: ?..?))
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
             (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
@@ -219,7 +219,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: grouped, cached, backward or record-info scan)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -482,7 +482,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: grouped, cached, backward or record-info scan)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -542,14 +542,14 @@ Trace Statistics:
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
                  (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
-            GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+            GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
                     (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+            GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), readrows: ?, rows: ?)
                     (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
