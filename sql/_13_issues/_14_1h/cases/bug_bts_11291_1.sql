@@ -1,3 +1,17 @@
+/**
+ *  This test case verifies CUBRIDSUS-11291: [RQG] with rollup failed, ERROR: Unknown query identifier: 0
+ *
+ *  GROUP BY ... WITH ROLLUP with SUM(DISTINCT) failed with that error. The case runs the query of the
+ *  issue over its table and checks that it returns the SUM(DISTINCT) of every group and of the grand
+ *  total. The argument of SUM is cast to BIGINT: SUM returns the type of its argument, and the grand
+ *  total adds the 650 distinct values of col_int, whose sum is past the range of INTEGER. Before
+ *  CBRD-27930 the grand total added only the values of the last group.
+ *
+ *  Coverage:
+ *    Case 1:  SUM(DISTINCT) of every group and of the grand total of GROUP BY ... WITH ROLLUP
+ */
+
+drop table if exists g;
 create table g(
        col_varchar_10_key character varying(10),
        col_int integer,
@@ -810,5 +824,9 @@ insert into g values(NULL,-583991296,'p','o',797,NULL,-732561408);
 insert into g values('f',-1176371200,'p','h',798,'n',28506);
 insert into g values('e',1173618688,'e','i',799,NULL,-417792000);
 insert into g values('c',-16969,'l','m',800,'n',NULL);
-SELECT  table1 . col_int AS field1 , SUM( DISTINCT table1 . col_int ) AS field2  FROM  G AS table1  GROUP BY field1 WITH ROLLUP order by field1,field2;
+
+
+evaluate 'Case 1: SUM(DISTINCT) of every group and of the grand total of GROUP BY ... WITH ROLLUP';
+SELECT  table1 . col_int AS field1 , SUM( DISTINCT CAST( table1 . col_int AS BIGINT ) ) AS field2  FROM  G AS table1  GROUP BY field1 WITH ROLLUP order by field1,field2;
+
 drop table g;
