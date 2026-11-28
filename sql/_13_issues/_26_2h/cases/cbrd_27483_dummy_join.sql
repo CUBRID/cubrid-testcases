@@ -34,6 +34,9 @@
  *    Case 14:  Case 12 with two such tables
  *    Case 15:  the ORDERED hint on a table after a CROSS JOIN that no condition joins to the table before it
  *    Case 16:  a LEFT JOIN after two commas, where the planner visits every table without a dummy join term
+ *    Case 17:  an INNER JOIN whose ON joins the NULL-padded table of a LEFT JOIN and the table before a CROSS JOIN,
+ *              one join term each
+ *    Case 18:  Case 17 with a LEADING hint that joins the inner table before the table before the CROSS JOIN
  */
 -- Cases 1 - 2: no row of tb meets ON tb.ca > tb.cb, and td and tg are empty, so each LEFT JOIN NULL-pads its rows
 -- ta, tb and tc are large and te is small, so the planner joins tb after te, ta and tc
@@ -189,5 +192,30 @@ UPDATE STATISTICS ON ta, tb, tc, td WITH FULLSCAN;
 evaluate 'Case 16: a LEFT JOIN after two commas, where the planner visits every table without a dummy join term; result = 1 row';
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca, tb.ca, tc.ca, td.ca FROM ta, tb, tc LEFT JOIN td ON td.ca = tc.ca WHERE tb.cb = tc.cb AND ta.ca = tc.ca ORDER BY 1, 2, 3, 4;
+
+DROP TABLE ta, tb, tc, td;
+
+-- Cases 17 - 18 use new data: no row of tc has ca 3, so the LEFT JOIN NULL-pads the row 3 of tb, and the row of td
+-- with ca NULL must not match it
+DROP TABLE IF EXISTS ta, tb, tc, td;
+CREATE TABLE ta (ca INT, cb INT);
+CREATE TABLE tb (ca INT, cb INT);
+CREATE TABLE tc (ca INT, cb INT);
+CREATE TABLE td (ca INT, cb INT);
+INSERT INTO ta VALUES (1, 1), (2, 2);
+INSERT INTO tb VALUES (1, 1), (3, 3);
+INSERT INTO tc VALUES (1, 1), (1, 2);
+INSERT INTO td VALUES (1, 1), (NULL, 2), (1, 2);
+UPDATE STATISTICS ON ta, tb, tc, td;
+
+-- td reads the NULL-padded tc, so it comes after the LEFT JOIN, but it does not have to come after ta: the ON of an
+-- INNER JOIN filters like a WHERE, so td.cb = ta.cb can be checked when ta is joined after td
+evaluate 'Case 17: an INNER JOIN whose ON joins the NULL-padded table of a LEFT JOIN and the table before a CROSS JOIN, one join term each; result = 4 rows';
+--@queryplan
+SELECT /*+ RECOMPILE */ ta.ca, tb.ca, tc.cb, td.cb FROM ta CROSS JOIN tb LEFT JOIN tc ON tc.ca = tb.ca INNER JOIN td ON td.ca = tc.ca AND td.cb = ta.cb ORDER BY 1, 2, 3, 4;
+
+evaluate 'Case 18: Case 17 with a LEADING hint that joins the inner table before the table before the CROSS JOIN; result = same rows as Case 17';
+--@queryplan
+SELECT /*+ RECOMPILE LEADING(tb, tc, td, ta) */ ta.ca, tb.ca, tc.cb, td.cb FROM ta CROSS JOIN tb LEFT JOIN tc ON tc.ca = tb.ca INNER JOIN td ON td.ca = tc.ca AND td.cb = ta.cb ORDER BY 1, 2, 3, 4;
 
 DROP TABLE ta, tb, tc, td;

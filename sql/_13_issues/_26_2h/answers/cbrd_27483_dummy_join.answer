@@ -865,3 +865,107 @@ Query stmt:
 select ta.ca, tb.ca, tc.ca, td.ca from ta ta, tb tb, tc tc left outer join td td on td.ca=tc.ca where tb.cb=tc.cb and ta.ca=tc.ca order by ?, ?, ?, ?
 ===================================================
 0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+2
+===================================================
+2
+===================================================
+3
+===================================================
+0
+===================================================
+    
+Case 17: an INNER JOIN whose ON joins the NULL-padded table of a LEFT JOIN and the table before a CROSS JOIN, one join term each; result = 4 rows     
+
+===================================================
+ca    ca    cb    cb    
+1     1     1     1     
+1     1     2     1     
+2     1     1     2     
+2     1     2     2     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: nl-join (left outer join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: tb node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: tc node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: td node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: ta node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.ca, tb.ca, tc.cb, td.cb from ta ta cross join tb tb left outer join tc tc on tc.ca=tb.ca inner join td td on td.cb=ta.cb and td.ca=tc.ca order by ?, ?, ?, ?
+===================================================
+    
+Case 18: Case 17 with a LEADING hint that joins the inner table before the table before the CROSS JOIN; result = same rows as Case 17     
+
+===================================================
+ca    ca    cb    cb    
+1     1     1     1     
+1     1     2     1     
+2     1     1     2     
+2     1     2     2     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: nl-join (left outer join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: tb node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: tc node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: td node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: ta node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(tb, tc, td, ta) */ ta.ca, tb.ca, tc.cb, td.cb from ta ta cross join tb tb left outer join tc tc on tc.ca=tb.ca inner join td td on td.cb=ta.cb and td.ca=tc.ca order by ?, ?, ?, ?
+===================================================
+0
