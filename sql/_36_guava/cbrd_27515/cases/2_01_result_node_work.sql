@@ -102,10 +102,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- expected: temp_scans 3, pass_through 2
 --   A SELECT ... FOR UPDATE keeps its plan, while the joins below the top pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
--- Bug: Currently hangs the server (CBRD-28070). This test case will be re-enabled after the issue is resolved.
--- evaluate 'TC-2-01-06: FOR UPDATE';
--- select /*+ recompile use_hash */ a.cb, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca for update;
--- select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
+evaluate 'TC-2-01-06: FOR UPDATE';
+select /*+ recompile use_hash */ a.cb, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca for update;
+select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 
 drop table if exists ta, tb, tc, td;
 
