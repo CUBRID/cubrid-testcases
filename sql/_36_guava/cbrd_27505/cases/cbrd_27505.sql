@@ -1,8 +1,9 @@
 /**
  *  This test case verifies CBRD-27505 : a single table CONNECT BY without an index on the child key runs its
  *  connect condition as a hash list scan also when the PRIOR key and the child key differ in type or in NUMERIC
- *  scale, since both keys are hashed in one domain common to the pair, and must return the same rows as the
- *  single table plan (the NO_HASH_LIST_SCAN hint).
+ *  scale, since two exact numbers (SMALLINT, INT, BIGINT, NUMERIC) hash by value and two floating numbers
+ *  (FLOAT, DOUBLE, MONETARY) by the DOUBLE they equal, as they are, and any other pair in one domain common
+ *  to the pair, and must return the same rows as the single table plan (the NO_HASH_LIST_SCAN hint).
  *
  *  Every case counts the rows of the query and a checksum of its levels, compares both with the same query with
  *  NO_HASH_LIST_SCAN, and prints PASS when both equal the expected values.
@@ -33,18 +34,24 @@
  *    Case 19: prior INT = CAST(DOUBLE AS INT) with START WITH rows: 4 rows
  *    Case 20: trace: Cases 1, 6 and 4 run as a hash list scan (SCAN (hash temp(m), ...)), Cases 15 and 17
  *             keep the single table plan (SCAN (table: ...) under CONNECTBY)
- *    Case 21: prior NUMERIC(14,0) = NUMERIC(18,4) with 14 digit keys: 4 rows. The pair is hashed as DOUBLE, which
- *             rounds a coefficient above 2^53, so this query keeps the single table plan.
- *    Case 22: prior NUMERIC(38,0) = NUMERIC(38,-5): 4 rows. A negative scale also rounds in DOUBLE.
- *    Case 23: trace: Cases 21 and 22 keep the single table plan
+ *    Case 21: prior NUMERIC(14,0) = NUMERIC(18,4) with 14 digit keys: 4 rows. Two NUMERICs hash by value, so this
+ *             query runs as a hash list scan.
+ *    Case 22: prior NUMERIC(38,0) = NUMERIC(38,-5): 4 rows, as a hash list scan for a negative scale too.
+ *    Case 23: trace: Cases 21 and 22 run as a hash list scan
  *    Case 24: prior INT = INT and CAST(BIGINT 3000000000 AS INT) = 1, no START WITH row: no error, 0 rows. A side
  *             with a column paired with a constant is a build key too, so a cast there keeps the single table plan.
  *    Case 25: as Case 24 with the cast conjunct written first and START WITH rows: 2 rows
  *    Case 26: prior INT = INT and BIGINT = 1 without a cast: 2 rows
  *    Case 27: trace: Cases 24 and 25 keep the single table plan, Case 26 runs as a hash list scan
+ *    Case 28: prior DATE = ENUM with an ENUM label 'a', no START WITH row: no error, 0 rows. The compiler casts the
+ *             ENUM by its label to DATE, which can fail as a string cast does, so this query keeps the single table
+ *             plan.
+ *    Case 29: prior INT = ENUM with START WITH rows: 4 rows. An ENUM compared with a number takes its index, which
+ *             does not fail, so this query runs as a hash list scan.
+ *    Case 30: trace: Case 28 keeps the single table plan, Case 29 runs as a hash list scan
  */
 
-drop table if exists hs_si, hs_is, hs_cv, hs_bd, hs_db, hs_na, hs_nb, hs_in, hs_ni, hs_dn, hs_fd, hs_mk, hs_iv, hs_ivn, hs_cg, hs_cp, hs_nl, hs_nq, hs_kc;
+drop table if exists hs_si, hs_is, hs_cv, hs_bd, hs_db, hs_na, hs_nb, hs_in, hs_ni, hs_dn, hs_fd, hs_mk, hs_iv, hs_ivn, hs_cg, hs_cp, hs_nl, hs_nq, hs_kc, hs_ke;
 
 create table hs_si (id smallint, pid int, n int);
 insert into hs_si values (1, null, 1), (2, 1, 2), (3, 100000, 3), (4, 2, 4);
@@ -87,6 +94,10 @@ insert into hs_nq values (100000,NULL,1),(1200000,100000,2),(-500000,1200000,3),
 
 create table hs_kc (id int, pid int, k bigint, n int);
 insert into hs_kc values (1, null, 10, 1), (2, 5, 3000000000, 2), (3, 1, 1, 3);
+
+-- n 1 holds the label 'a', which does not convert to DATE; e's indexes: 'x' 1, 'y' 2, '2024-01-01' 3, 'a' 4
+create table hs_ke (n int, id int, d date, e enum('x', 'y', '2024-01-01', 'a'));
+insert into hs_ke values (1, 1, '2024-01-01', 'a'), (2, 2, '2024-01-02', 'x'), (3, 3, '2024-01-03', 'y'), (9, 9, '2024-01-09', '2024-01-01');
 
 
 evaluate 'Case 1: prior smallint = int; 3 rows';
@@ -230,7 +241,7 @@ from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs
      (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_nq start with n = 1 connect by prior id = pid) t) b;
 
 
-evaluate 'Case 23: trace of Cases 21 and 22 (single table plan)';
+evaluate 'Case 23: trace of Cases 21 and 22 (hash temp)';
 set trace on;
 select n, level lv from hs_nl start with n = 1 connect by prior id = pid order siblings by n;
 show trace;
@@ -268,4 +279,25 @@ show trace;
 set trace off;
 
 
-drop table hs_si, hs_is, hs_cv, hs_bd, hs_db, hs_na, hs_nb, hs_in, hs_ni, hs_dn, hs_fd, hs_mk, hs_iv, hs_ivn, hs_cg, hs_cp, hs_nl, hs_nq, hs_kc;
+evaluate 'Case 28: prior date = enum with the label a, no START WITH row; 0 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 0 and nvl(a.s, -1) = -1 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_ke start with n = 99 connect by prior d = e) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_ke start with n = 99 connect by prior d = e) t) b;
+
+
+evaluate 'Case 29: prior int = enum (its index); 4 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 4 and nvl(a.s, -1) = 160 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_ke start with n = 1 connect by prior id = e) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_ke start with n = 1 connect by prior id = e) t) b;
+
+
+evaluate 'Case 30: trace of Cases 28 (single table plan) and 29 (hash temp)';
+set trace on;
+select n, level lv from hs_ke start with n = 99 connect by prior d = e order siblings by n;
+show trace;
+select n, level lv from hs_ke start with n = 1 connect by prior id = e order siblings by n;
+show trace;
+set trace off;
+
+
+drop table hs_si, hs_is, hs_cv, hs_bd, hs_db, hs_na, hs_nb, hs_in, hs_ni, hs_dn, hs_fd, hs_mk, hs_iv, hs_ivn, hs_cg, hs_cp, hs_nl, hs_nq, hs_kc, hs_ke;

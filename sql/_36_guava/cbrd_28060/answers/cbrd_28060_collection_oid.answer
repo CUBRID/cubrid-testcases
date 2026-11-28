@@ -1,0 +1,59 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+2
+===================================================
+0
+===================================================
+    
+Case 1: SET OF a class - hash join of t_set_object_a and t_set_object_b returns the pairs of the nested loop join     
+
+===================================================
+ca    ca    
+1     11     
+2     12     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.t_set_object_a)
+      TABLE SCAN (dba.t_set_object_b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_set_object_a].ca, [dba.t_set_object_b].ca from [dba.t_set_object_a] [dba.t_set_object_a], [dba.t_set_object_b] [dba.t_set_object_b] where [dba.t_set_object_a].cb=[dba.t_set_object_b].cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_set_object_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_set_object_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+0
+===================================================
+0

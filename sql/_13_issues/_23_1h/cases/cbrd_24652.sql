@@ -1,6 +1,8 @@
 -- This test case verifies CBRD-24652 issue.
 -- The problem performing hash list scan when VOBJECT is included in predicates.
--- Hash list scan should not be used in the result.
+-- CBRD-24652 kept hash list scan off for a VOBJ key, as a VOBJ hashed by its address.
+-- CBRD-28060 hashes a VOBJ by its key (the real OID), which setvobj_compare () compares,
+-- so the scan may use hash list scan and must return the rows of the list scan.
 -- When using UNION, there is an issue where the output is inconsistent because UNION_PROC is used instead of OBJ_FETCH_PROC for processing.
 
 drop table if exists tbl;

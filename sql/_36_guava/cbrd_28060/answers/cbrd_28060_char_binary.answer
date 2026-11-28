@@ -1,0 +1,679 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+4
+===================================================
+7
+===================================================
+6
+===================================================
+6
+===================================================
+26
+===================================================
+26
+===================================================
+26
+===================================================
+0
+===================================================
+    
+Case 1: binary - hash join of t_char_long and t_char_long returns the pairs of the nested loop join     
+
+===================================================
+ca    ca    
+1     1     
+1     11     
+2     2     
+3     3     
+4     4     
+4     10     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     4     
+10     10     
+11     1     
+11     11     
+12     12     
+13     13     
+14     14     
+15     15     
+16     16     
+17     17     
+18     18     
+19     19     
+20     20     
+21     21     
+22     22     
+23     23     
+24     24     
+24     25     
+25     24     
+25     25     
+26     26     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.t_char_long] x, [dba.t_char_long] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_char_long), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_char_long), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 2: binary - hash join of t_char_short and t_char_long returns the pairs of the nested loop join     
+
+===================================================
+ca    ca    
+1     1     
+1     11     
+2     2     
+3     3     
+4     4     
+4     10     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     4     
+10     10     
+11     1     
+11     11     
+12     12     
+13     13     
+14     14     
+15     15     
+16     16     
+17     17     
+18     18     
+19     19     
+20     20     
+21     21     
+22     22     
+23     23     
+24     24     
+24     25     
+25     24     
+25     25     
+26     26     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.t_char_short] x, [dba.t_char_long] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_char_long), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_char_short), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 3: binary - hash join of t_char_short and t_varchar returns the pairs of the nested loop join     
+
+===================================================
+ca    ca    
+1     1     
+1     11     
+2     2     
+3     3     
+4     4     
+4     10     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     4     
+10     10     
+11     1     
+11     11     
+12     12     
+13     13     
+14     14     
+15     15     
+16     16     
+17     17     
+18     18     
+19     19     
+20     20     
+21     21     
+22     22     
+23     23     
+24     24     
+24     25     
+25     24     
+25     25     
+26     26     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.t_char_short] x, [dba.t_varchar] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_varchar), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_char_short), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 4: binary - hash join of t_char_long and t_varchar returns the pairs of the nested loop join     
+
+===================================================
+ca    ca    
+1     1     
+1     11     
+2     2     
+3     3     
+4     4     
+4     10     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     4     
+10     10     
+11     1     
+11     11     
+12     12     
+13     13     
+14     14     
+15     15     
+16     16     
+17     17     
+18     18     
+19     19     
+20     20     
+21     21     
+22     22     
+23     23     
+24     24     
+24     25     
+25     24     
+25     25     
+26     26     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.t_char_long] x, [dba.t_varchar] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_varchar), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_char_long), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 5: binary - hash GROUP BY on t_char_long returns the groups of the sort GROUP BY     
+
+===================================================
+min(ca)    count(*)    
+1     2     
+2     1     
+3     1     
+4     2     
+5     1     
+6     1     
+7     1     
+8     1     
+9     1     
+12     1     
+13     1     
+14     1     
+15     1     
+16     1     
+17     1     
+18     1     
+19     1     
+20     1     
+21     1     
+22     1     
+23     1     
+24     2     
+26     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.t_char_long)
+
+  rewritten query: select min([dba.t_char_long].ca), count(*) from [dba.t_char_long] [dba.t_char_long] group by [dba.t_char_long].cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_char_long), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: false, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 6: binary - t_char_long_part prune per CHAR(5) constant reads one partition and matches t_char_long     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+1     []     2     2     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+2     [ ]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+3     [  ]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+4     [a]     2     2     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+5     [a ]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+6     [a  ]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+7     [A]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+8     [a b]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+9     [a\0b]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+10     [a\0]     2     2     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+11     [\0]     2     2     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+12     [\0b]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+13     [ b]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+14     [b]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+15     [i]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+16     [I]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+17     [ss]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+18     [e]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+19     [E]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+20     [a\tb]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+21     [\xFF]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+22     [a\xFF]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+23     [a \xFF]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+24     [\x80\0]     2     2     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+25     [\x80]     2     2     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+26     [\0\xFF]     1     1     
+
+===================================================
+count(*)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_char_long_part)
+
+  rewritten query: select count(*) from [dba.t_char_long_part] [dba.t_char_long_part] where [dba.t_char_long_part].cb= cast( chr(? using binary) as char(?) collate binary)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_char_long_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_char_long_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 7: binary - t_char_long_part prune per VARCHAR(40) constant reads one partition and matches t_char_long     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+1     []     2     2     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+2     [ ]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+3     [  ]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+4     [a]     2     2     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+5     [a ]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+6     [a  ]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+7     [A]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+8     [a b]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+9     [a\0b]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+10     [a\0]     2     2     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+11     [\0]     2     2     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+12     [\0b]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+13     [ b]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+14     [b]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+15     [i]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+16     [I]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+17     [ss]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+18     [e]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+19     [E]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+20     [a\tb]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+21     [\xFF]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+22     [a\xFF]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+23     [a \xFF]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+24     [\x80\0]     2     2     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+25     [\x80]     2     2     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+26     [\0\xFF]     1     1     
+
+===================================================
+count(*)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_char_long_part)
+
+  rewritten query: select count(*) from [dba.t_char_long_part] [dba.t_char_long_part] where [dba.t_char_long_part].cb= cast( chr(? using binary) as varchar(?) collate binary)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_char_long_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_char_long_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 8: binary - hash list scan of t_char_short and t_char_long returns the pairs of the join without the hash list scan     
+
+===================================================
+ca    ca    
+1     1     
+1     11     
+2     2     
+3     3     
+4     4     
+4     10     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     4     
+10     10     
+11     1     
+11     11     
+12     12     
+13     13     
+14     14     
+15     15     
+16     16     
+17     17     
+18     18     
+19     19     
+20     20     
+21     21     
+22     22     
+23     23     
+24     24     
+24     25     
+25     24     
+25     25     
+26     26     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_char_long)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_char_long].ca, [dba.t_char_long].cb from [dba.t_char_long] [dba.t_char_long] where ([dba.t_char_long].ca>= ?:? ))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ x.ca, y.ca from [dba.t_char_short] x, (select /*+ NO_MERGE */ [dba.t_char_long].ca, [dba.t_char_long].cb from [dba.t_char_long] [dba.t_char_long] where ([dba.t_char_long].ca>= ?:? )) y (ca, cb) where x.cb=y.cb order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_char_short), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_char_long), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0

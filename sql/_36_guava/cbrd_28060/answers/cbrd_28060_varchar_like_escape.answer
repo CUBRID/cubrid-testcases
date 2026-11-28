@@ -1,0 +1,84 @@
+===================================================
+0
+===================================================
+0
+===================================================
+16
+===================================================
+    
+Case 1: an escaped wildcard matches the same rows under utf8_bin, utf8_de_exp and utf8_fr_exp_ab     
+
+===================================================
+id    pattern    rows_bin    rows_de    rows_fr    
+1     [a!%c]     1     1     1     
+
+===================================================
+id    pattern    rows_bin    rows_de    rows_fr    
+2     [!%bc]     4     4     4     
+
+===================================================
+id    pattern    rows_bin    rows_de    rows_fr    
+3     [ab!%]     5     5     5     
+
+===================================================
+id    pattern    rows_bin    rows_de    rows_fr    
+4     [a!_c]     3     3     3     
+
+===================================================
+id    pattern    rows_bin    rows_de    rows_fr    
+5     [%a!%c]     1,6     1,6     1,6     
+
+===================================================
+id    pattern    rows_bin    rows_de    rows_fr    
+6     [a!%c%]     1     1     1     
+
+===================================================
+    
+Case 2: an escape character that escapes itself or ends a pattern matches the same rows     
+
+===================================================
+id    pattern    rows_bin    rows_de    rows_fr    
+7     [a!!c]     7     7     7     
+
+===================================================
+id    pattern    rows_bin    rows_de    rows_fr    
+8     [ab!]     8     8     8     
+
+===================================================
+    
+Case 3: level 2 still tells an accent apart after an escape     
+
+===================================================
+id    pattern    rows_bin    rows_de    rows_fr    
+9     [<U+00C4>!%c]     9     9     9     
+
+===================================================
+id    pattern    rows_bin    rows_de    rows_fr    
+10     [c<U+00F4>t!%]     11     11     11     
+
+===================================================
+    
+Case 4: an escaped space matches the same rows under utf8_bin, utf8_de_exp and utf8_fr_exp_ab     
+
+===================================================
+id    pattern    rows_bin    rows_de    rows_fr    
+11     [ab! ]     13,14     13,14     13,14     
+
+===================================================
+id    pattern    rows_bin    rows_de    rows_fr    
+12     [ab!  ]     14     14     14     
+
+===================================================
+id    pattern    rows_bin    rows_de    rows_fr    
+13     [ab! %]     13,14     13,14     13,14     
+
+===================================================
+id    pattern    rows_bin    rows_de    rows_fr    
+14     [a! b]     15     15     15     
+
+===================================================
+id    pattern    rows_bin    rows_de    rows_fr    
+15     [! ab]     16     16     16     
+
+===================================================
+0

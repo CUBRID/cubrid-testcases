@@ -60,7 +60,7 @@ ALTER TABLE s1 COALESCE PARTITION 2;
 
 ALTER VIEW v1 as select * from s1 partition (p0);
 
-insert into v1 values (1,1);
+insert into v1 values (29,29);
 
 ALTER VIEW v1 as select * from s1 partition (p1);
 
@@ -74,7 +74,7 @@ select incr(i) from s1 partition(p0);
 
 select * from v1 order by 1,2;
 
-insert into s1 values (1,1);
+insert into s1 values (29,29);
 
 select * from v1 order by 1;
 
@@ -93,8 +93,8 @@ ALTER TABLE s1 partition by hash(i) partitions  2;
 
 create view v1 as select * from s1 partition (p1);
 
-insert into v1 values (1,1);
-insert into s1 values (2,2);
+insert into v1 values (3,3);
+insert into s1 values (5,5);
 
 select incr(i) from s1 ; 
 

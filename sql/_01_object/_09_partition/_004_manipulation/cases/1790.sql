@@ -33,7 +33,7 @@ create table hash_test(id int,
 	insert into hash_test values(20,20,20,20.180252385,20.916737,20.624429,20.982398624,20,'2007-01-01 09:00:00');
 	insert into hash_test values(21,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2006-03-01 09:00:00');
 update hash_test set test_smallint  = 19  where  test_smallint = 4;
-update hash_test set test_smallint  =  8 where  test_smallint = 11;
+update hash_test set test_smallint  =  16 where  test_smallint = 11;
 select * from hash_test order by id;
 select * from hash_test__p__p0 order by id;
 select * from hash_test__p__p1 order by id;

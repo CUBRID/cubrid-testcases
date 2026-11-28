@@ -77,6 +77,10 @@
 ===================================================
 3
 ===================================================
+0
+===================================================
+4
+===================================================
     
 Case 1: prior smallint = int; 3 rows     
 
@@ -363,7 +367,7 @@ PASS     4
 
 ===================================================
     
-Case 23: trace of Cases 21 and 22 (single table plan)     
+Case 23: trace of Cases 21 and 22 (hash temp)     
 
 ===================================================
 0
@@ -387,7 +391,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.hs_nl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-      SCAN (table: dba.hs_nl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -411,7 +415,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.hs_nq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-      SCAN (table: dba.hs_nq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -506,6 +510,74 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.hs_kc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 28: prior date = enum with the label a, no START WITH row; 0 rows     
+
+===================================================
+res    cnt    
+PASS     0     
+
+===================================================
+    
+Case 29: prior int = enum (its index); 4 rows     
+
+===================================================
+res    cnt    
+PASS     4     
+
+===================================================
+    
+Case 30: trace of Cases 28 (single table plan) and 29 (hash temp)     
+
+===================================================
+0
+===================================================
+n    lv    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.hs_ke)
+
+  rewritten query: select [dba.hs_ke].n, level from [dba.hs_ke] [dba.hs_ke] start with [dba.hs_ke].n= ?:?  connect by  prior [dba.hs_ke].d= cast([dba.hs_ke].e as date) order siblings by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hs_ke), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.hs_ke), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+n    lv    
+1     1     
+2     2     
+3     3     
+9     4     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.hs_ke)
+
+  rewritten query: select [dba.hs_ke].n, level from [dba.hs_ke] [dba.hs_ke] start with [dba.hs_ke].n= ?:?  connect by  prior [dba.hs_ke].id= cast([dba.hs_ke].e as integer) order siblings by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hs_ke), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)

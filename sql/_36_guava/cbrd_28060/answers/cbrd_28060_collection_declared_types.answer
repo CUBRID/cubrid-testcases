@@ -1,0 +1,211 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+    
+Case 1: SET of several element types of one hash type - hash join of t_exact_a and t_exact_b returns the pairs of the nested loop join     
+
+===================================================
+ca    ca    
+101     111     
+102     112     
+103     113     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.t_exact_a)
+      TABLE SCAN (dba.t_exact_b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_exact_a].ca, [dba.t_exact_b].ca from [dba.t_exact_a] [dba.t_exact_a], [dba.t_exact_b] [dba.t_exact_b] where [dba.t_exact_a].cb=[dba.t_exact_b].cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_exact_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_exact_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+ca    ca    
+121     131     
+122     132     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.t_string_a)
+      TABLE SCAN (dba.t_string_b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_string_a].ca, [dba.t_string_b].ca from [dba.t_string_a] [dba.t_string_a], [dba.t_string_b] [dba.t_string_b] where [dba.t_string_a].cb=[dba.t_string_b].cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_string_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_string_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+ca    ca    
+181     191     
+182     192     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.t_int_double_a)
+      TABLE SCAN (dba.t_int_double_b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_int_double_a].ca, [dba.t_int_double_b].ca from [dba.t_int_double_a] [dba.t_int_double_a], [dba.t_int_double_b] [dba.t_int_double_b] where [dba.t_int_double_a].cb=[dba.t_int_double_b].cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_int_double_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_int_double_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+    
+Case 2: SET of element types of two hash types - t_int_varchar_a and t_int_varchar_b join by nested loop under a hash join hint, with the pairs of the nested loop join     
+
+===================================================
+ca    ca    
+141     151     
+141     152     
+142     153     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.t_int_varchar_a)
+      TABLE SCAN (dba.t_int_varchar_b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_int_varchar_a].ca, [dba.t_int_varchar_b].ca from [dba.t_int_varchar_a] [dba.t_int_varchar_a], [dba.t_int_varchar_b] [dba.t_int_varchar_b] where [dba.t_int_varchar_a].cb=[dba.t_int_varchar_b].cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_int_varchar_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_int_varchar_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+ca    ca    
+161     171     
+161     172     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.t_int_float_a)
+      TABLE SCAN (dba.t_int_float_b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_int_float_a].ca, [dba.t_int_float_b].ca from [dba.t_int_float_a] [dba.t_int_float_a], [dba.t_int_float_b] [dba.t_int_float_b] where [dba.t_int_float_a].cb=[dba.t_int_float_b].cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_int_float_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_int_float_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+0
+===================================================
+0

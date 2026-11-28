@@ -53,7 +53,7 @@ create index idx_t2 on t2(b);
 --- Comment the query out since CBRD-20912 issue.
 --- select /*+ select_btree_node_info(idx_t2) */ * from t2__p__p0 order by 2; 
 
-select /*+ select_key_info(idx_t2) */ key_key,key_oid_count,key_first_oid,key_overflow_key,key_overflow_oids from t2__p__p1;
+select /*+ select_key_info(idx_t2) */ key_key,key_oid_count,key_first_oid,key_overflow_key,key_overflow_oids from t2__p__p0;
 
 drop table t2;
 

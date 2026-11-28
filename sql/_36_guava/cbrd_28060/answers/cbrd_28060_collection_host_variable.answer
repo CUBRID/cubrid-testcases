@@ -1,0 +1,185 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+    
+Case 1: INT - hash join of a key of a scalar host variable expression returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+61     71     
+62     72     
+63     73     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.t_multiset_varchar)
+      TABLE SCAN (dba.t_multiset_int)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_multiset_varchar].ca, [dba.t_multiset_int].ca from [dba.t_multiset_varchar] [dba.t_multiset_varchar], [dba.t_multiset_int] [dba.t_multiset_int] where [dba.t_multiset_int].ca=[dba.t_multiset_varchar].ca+ ?:?  order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_multiset_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_multiset_varchar), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+result    
+PASS     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 2: MULTISET - a key of a host variable expression joins by nested loop under a hash join hint, with the pairs of the nested loop join, for each of two bound values     
+
+===================================================
+0
+===================================================
+ca    ca    
+61     71     
+63     73     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.t_multiset_varchar)
+      TABLE SCAN (dba.t_multiset_int)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_multiset_varchar].ca, [dba.t_multiset_int].ca from [dba.t_multiset_varchar] [dba.t_multiset_varchar], [dba.t_multiset_int] [dba.t_multiset_int] where [dba.t_multiset_int].cb=[dba.t_multiset_varchar].cb- ?:?  order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_multiset_varchar), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_multiset_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+ca    ca    
+61     71     
+63     71     
+
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_multiset_varchar), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_multiset_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+result    
+PASS     
+
+===================================================
+result    
+PASS     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 3: MULTISET - a key of a host variable expression beside a scalar key joins by nested loop under a hash join hint, with the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+61     71     
+63     73     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.t_multiset_varchar)
+      TABLE SCAN (dba.t_multiset_int)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_multiset_varchar].ca, [dba.t_multiset_int].ca from [dba.t_multiset_varchar] [dba.t_multiset_varchar], [dba.t_multiset_int] [dba.t_multiset_int] where [dba.t_multiset_int].cb=[dba.t_multiset_varchar].cb- ?:?  and [dba.t_multiset_int].ca=[dba.t_multiset_varchar].ca+? order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_multiset_varchar), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_multiset_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+result    
+PASS     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 4: MULTISET - a join on a derived table by a host variable expression bound to NULL returns no row     
+
+===================================================
+0
+===================================================
+ca    
+
+===================================================
+0
+===================================================
+    
+Case 5: MULTISET - CONNECT BY a host variable expression bound to NULL returns the START WITH row only     
+
+===================================================
+0
+===================================================
+ca    
+71     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0

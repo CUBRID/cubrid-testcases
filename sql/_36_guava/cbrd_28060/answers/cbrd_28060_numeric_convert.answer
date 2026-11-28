@@ -1,0 +1,28 @@
+===================================================
+    
+Case 1: NUMERIC to DOUBLE - one value converts to one DOUBLE whatever its type and scale     
+
+===================================================
+numeric_bigint    numeric_scale    numeric_fraction    
+1     1     1     
+
+===================================================
+to_char( cast( cast(495038888524330534.0000 as numeric(24,4)) as double), '999999999999999999')    
+495038888524330600     
+
+===================================================
+    
+Case 2: NUMERIC and string to FLOAT - a value just off the midpoint of two FLOATs converts to the nearest one     
+
+===================================================
+numeric_up    numeric_down    string_up    string_down    
+1     1     1     1     
+
+===================================================
+    
+Case 3: string to DOUBLE - a subnormal value converts to it, not to an overflow error     
+
+===================================================
+above_zero    below_normal    
+1     1     
+

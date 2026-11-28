@@ -34,6 +34,7 @@ select * from t1__p__p0 order by i;
 select * from t1__p__p1 order by i;
 select * from t1__p__p2 order by i;
 select * from t1__p__p3 order by i;
+select * from t1__p__p4 order by i;
 
 drop table t1;
 

@@ -34,7 +34,7 @@ create table hash_test(id int not null ,
 	insert into hash_test values(19,'sss','sss',B'101',B'1111',N'sss',N'sss','ssssssssss','2006-03-01 09:00:00');
 	insert into hash_test values(20,'ttt','ttt',B'101',B'1111',N'ttt',N'ttt','tttttttttt','2006-03-01 09:00:00');
 	insert into hash_test values(21,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2006-03-01 09:00:00');
-update hash_test set test_nvarchar = N'aaa' where test_nvarchar = N'ddd';
+update hash_test set test_nvarchar = N'eee' where test_nvarchar = N'ddd';
 update hash_test set test_nvarchar = N'bbb' where test_nvarchar = N'sss';
 
 select * from hash_test order by id;

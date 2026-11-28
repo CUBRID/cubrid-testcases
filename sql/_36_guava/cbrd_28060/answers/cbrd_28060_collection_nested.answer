@@ -1,0 +1,339 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+    
+Case 1: SEQUENCE OF SET and SEQUENCE OF SEQUENCE - hash join of t_sequence_set and t_sequence_sequence returns the pairs of the nested loop join     
+
+===================================================
+ca    ca    
+91     93     
+92     95     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.t_sequence_set)
+      TABLE SCAN (dba.t_sequence_sequence)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_sequence_set].ca, [dba.t_sequence_sequence].ca from [dba.t_sequence_set] [dba.t_sequence_set], [dba.t_sequence_sequence] [dba.t_sequence_sequence] where [dba.t_sequence_set].cb=[dba.t_sequence_sequence].cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_sequence_sequence), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_sequence_set), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+    
+Case 2: SEQUENCE of a SET column - hash join of nested keys returns the pairs of the nested loop join     
+
+===================================================
+ca    ca    
+201     211     
+202     212     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.t_set_int)
+      TABLE SCAN (dba.t_collections)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_set_int].ca, [dba.t_collections].ca from [dba.t_set_int] [dba.t_set_int], [dba.t_collections] [dba.t_collections] where {[dba.t_set_int].cb}={[dba.t_collections].cb} order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_set_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_collections), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+ca    ca    
+201     211     
+202     212     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.t_set_int)
+      TABLE SCAN (dba.t_collections)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_set_int].ca, [dba.t_collections].ca from [dba.t_set_int] [dba.t_set_int], [dba.t_collections] [dba.t_collections] where {[dba.t_set_int].cb}={[dba.t_collections].cd} order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_set_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_collections), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+ca    ca    
+201     211     
+202     212     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.t_set_int)
+      TABLE SCAN (dba.t_collections)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_set_int].ca, [dba.t_collections].ca from [dba.t_set_int] [dba.t_set_int], [dba.t_collections] [dba.t_collections] where {[dba.t_set_int].cb}={[dba.t_collections].cc} order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_set_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_collections), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+ca    ca    
+201     211     
+202     212     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.t_set_int)
+      TABLE SCAN (dba.t_collections)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_set_int].ca, [dba.t_collections].ca from [dba.t_set_int] [dba.t_set_int], [dba.t_collections] [dba.t_collections] where {[dba.t_set_int].cb, [dba.t_set_int].ca+?}={[dba.t_collections].cb, [dba.t_collections].ca} order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_set_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_collections), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 3: SEQUENCE of a SET column - hash list scan of nested keys returns the pairs of the join without the hash list scan     
+
+===================================================
+ca    ca    
+201     211     
+202     212     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_collections)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_collections].ca, {[dba.t_collections].cb} from [dba.t_collections] [dba.t_collections] where ([dba.t_collections].ca>= ?:? ))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.t_set_int)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ [dba.t_set_int].ca, y.ca from [dba.t_set_int] [dba.t_set_int], (select /*+ NO_MERGE */ [dba.t_collections].ca, {[dba.t_collections].cb} from [dba.t_collections] [dba.t_collections] where ([dba.t_collections].ca>= ?:? )) y (ca, c) where y.c={[dba.t_set_int].cb} order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_set_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_collections), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+ca    ca    
+201     211     
+202     212     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_collections)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_collections].ca, {[dba.t_collections].cd} from [dba.t_collections] [dba.t_collections] where ([dba.t_collections].ca>= ?:? ))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.t_set_int)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ [dba.t_set_int].ca, y.ca from [dba.t_set_int] [dba.t_set_int], (select /*+ NO_MERGE */ [dba.t_collections].ca, {[dba.t_collections].cd} from [dba.t_collections] [dba.t_collections] where ([dba.t_collections].ca>= ?:? )) y (ca, c) where y.c={[dba.t_set_int].cb} order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_set_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_collections), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+ca    ca    
+201     211     
+202     212     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_collections)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_collections].ca, {[dba.t_collections].cc} from [dba.t_collections] [dba.t_collections] where ([dba.t_collections].ca>= ?:? ))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.t_set_int)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ [dba.t_set_int].ca, y.ca from [dba.t_set_int] [dba.t_set_int], (select /*+ NO_MERGE */ [dba.t_collections].ca, {[dba.t_collections].cc} from [dba.t_collections] [dba.t_collections] where ([dba.t_collections].ca>= ?:? )) y (ca, c) where y.c={[dba.t_set_int].cb} order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_set_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_collections), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+ca    ca    
+201     211     
+202     212     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_collections)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_collections].ca, {[dba.t_collections].cb, [dba.t_collections].ca} from [dba.t_collections] [dba.t_collections] where ([dba.t_collections].ca>= ?:? ))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.t_set_int)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ [dba.t_set_int].ca, y.ca from [dba.t_set_int] [dba.t_set_int], (select /*+ NO_MERGE */ [dba.t_collections].ca, {[dba.t_collections].cb, [dba.t_collections].ca} from [dba.t_collections] [dba.t_collections] where ([dba.t_collections].ca>= ?:? )) y (ca, c) where y.c={[dba.t_set_int].cb, [dba.t_set_int].ca+?} order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_set_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_collections), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+0
+===================================================
+0

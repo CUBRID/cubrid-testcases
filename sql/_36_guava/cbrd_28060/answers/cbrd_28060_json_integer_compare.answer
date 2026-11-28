@@ -1,0 +1,123 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+0
+===================================================
+0
+===================================================
+7
+===================================================
+    
+Case 1: JSON - an integer and a DOUBLE or a numeric string compare by their values at 2^53 and 2^63     
+
+===================================================
+id    cmp    
+1     gt     
+2     eq     
+3     gt     
+4     lt     
+5     lt     
+6     eq     
+7     gt     
+8     lt     
+
+===================================================
+    
+Case 2: JSON - an integer and the string "nan", "inf" or 2^63 compare as through DOUBLE     
+
+===================================================
+id    cmp    
+1     lt     
+2     lt     
+3     lt     
+4     lt     
+5     gt     
+6     lt     
+7     eq     
+
+===================================================
+    
+Case 3: JSON - hash join of an integer and a DOUBLE or a numeric string returns the pairs of the nested loop join     
+
+===================================================
+id    id    
+2     1     
+2     2     
+2     3     
+6     6     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.id, b.id from [dba.t_json_a] a, [dba.t_json_a] b where a.left_body=b.right_body order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_json_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_json_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 4: JSON - hash join of an integer and the string "nan", "inf" or 2^63 returns the pairs of the nested loop join     
+
+===================================================
+id    id    
+2     7     
+7     7     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.id, b.id from [dba.t_json_b] a, [dba.t_json_b] b where a.left_body=b.right_body order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_json_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_json_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+0
+===================================================
+0

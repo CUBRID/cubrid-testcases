@@ -1,0 +1,206 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+    
+Case 1: MULTISET - hash join of BIGINT and NUMERIC(24,4) elements returns the pairs of the nested loop join     
+
+===================================================
+ca    ca    
+31     41     
+32     42     
+33     43     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.t_multiset_bigint)
+      TABLE SCAN (dba.t_multiset_numeric)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_multiset_bigint].ca, [dba.t_multiset_numeric].ca from [dba.t_multiset_bigint] [dba.t_multiset_bigint], [dba.t_multiset_numeric] [dba.t_multiset_numeric] where [dba.t_multiset_bigint].cb=[dba.t_multiset_numeric].cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_multiset_numeric), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_multiset_bigint), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 2: MULTISET - BIGINT and DOUBLE elements join by nested loop under a hash join hint, with the pairs of the nested loop join     
+
+===================================================
+ca    ca    
+31     51     
+32     52     
+33     53     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.t_multiset_bigint)
+      TABLE SCAN (dba.t_multiset_double)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_multiset_bigint].ca, [dba.t_multiset_double].ca from [dba.t_multiset_bigint] [dba.t_multiset_bigint], [dba.t_multiset_double] [dba.t_multiset_double] where [dba.t_multiset_bigint].cb=[dba.t_multiset_double].cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_multiset_bigint), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_multiset_double), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 3: MULTISET - NUMERIC(24,4) and DOUBLE elements join by nested loop under a hash join hint, with the pairs of the nested loop join     
+
+===================================================
+ca    ca    
+41     51     
+42     52     
+43     53     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.t_multiset_numeric)
+      TABLE SCAN (dba.t_multiset_double)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_multiset_numeric].ca, [dba.t_multiset_double].ca from [dba.t_multiset_numeric] [dba.t_multiset_numeric], [dba.t_multiset_double] [dba.t_multiset_double] where [dba.t_multiset_numeric].cb=[dba.t_multiset_double].cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_multiset_numeric), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_multiset_double), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+    
+Case 4: MULTISET - CONNECT BY NOCYCLE of BIGINT and NUMERIC(24,4) elements returns the rows of the CONNECT BY without the hash list scan     
+
+===================================================
+ca    id    level    connect_by_iscycle    
+1     1,2,     1     0     
+2     3,     2     0     
+5     5,     2     0     
+3     495038888524330534,     3     0     
+4     1,2,     4     1     
+6     6,     4     0     
+5     5,     5     0     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_multiset_tree_numeric)
+
+  rewritten query: select [dba.t_multiset_tree_numeric].ca, [dba.t_multiset_tree_numeric].id, level, connect_by_iscycle from [dba.t_multiset_tree_numeric] [dba.t_multiset_tree_numeric] start with [dba.t_multiset_tree_numeric].ca= ?:?  connect by nocycle  prior [dba.t_multiset_tree_numeric].id=[dba.t_multiset_tree_numeric].pid order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_multiset_tree_numeric), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 5: MULTISET - CONNECT BY NOCYCLE of BIGINT and DOUBLE elements returns the rows of the CONNECT BY without the hash list scan     
+
+===================================================
+ca    id    level    connect_by_iscycle    
+1     1,2,     1     0     
+2     3,     2     0     
+5     5,     2     0     
+3     9007199254740993,     3     0     
+4     1,2,     4     1     
+6     6,     4     0     
+5     5,     5     0     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_multiset_tree_double)
+
+  rewritten query: select [dba.t_multiset_tree_double].ca, [dba.t_multiset_tree_double].id, level, connect_by_iscycle from [dba.t_multiset_tree_double] [dba.t_multiset_tree_double] start with [dba.t_multiset_tree_double].ca= ?:?  connect by nocycle  prior [dba.t_multiset_tree_double].id=[dba.t_multiset_tree_double].pid order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_multiset_tree_double), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+0
+===================================================
+0

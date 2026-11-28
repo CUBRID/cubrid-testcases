@@ -1,0 +1,49 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+9
+===================================================
+    
+Case 1: JSON - CONNECT BY by a hash list scan returns the rows of the CONNECT BY without the hash list scan     
+
+===================================================
+ca    level    
+1     1     
+2     2     
+3     2     
+4     2     
+5     3     
+6     3     
+7     3     
+8     2     
+9     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_json_tree)
+
+  rewritten query: select [dba.t_json_tree].ca, level from [dba.t_json_tree] [dba.t_json_tree] start with [dba.t_json_tree].ca= ?:?  connect by  prior [dba.t_json_tree].id=[dba.t_json_tree].pid order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_json_tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+0
+===================================================
+0

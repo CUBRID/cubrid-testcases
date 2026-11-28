@@ -33,7 +33,7 @@ alter table t1 add constraint primary key(j);
 
 insert into t (j,i, k,l,m,n) select t1.i,t2.j,t1.k,t2.l,t1.m,t2.n from t1,t2 where t1.i=t2.i on duplicate key update i = i-100;
 
-insert into t (j,i, k,l,m,n) select t1.i,t2.j,t1.k,t2.l,t1.m,t2.n from t1,t2 where t1.i=t2.i on duplicate key update i = i-1, k = k+1;
+insert into t (j,i, k,l,m,n) select t1.i,t2.j,t1.k,t2.l,t1.m,t2.n from t1,t2 where t1.i=t2.i order by t2.j on duplicate key update i = i-1, k = k+1;
 
 select * from t1 order by 1;
 

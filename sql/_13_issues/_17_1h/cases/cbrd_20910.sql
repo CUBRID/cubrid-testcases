@@ -63,7 +63,7 @@ insert into t2 values(104, repeat(N'ddd',300));
 
 select col1, max(col2) from t2 where rownum < 20 group by col1 order by 1;
 
-select count(col2) from t2__p__p1 where col1 >100 group by col2 having col2>n'b' order by col2 desc; 
+select count(col2) from t2__p__p2 where col1 >100 group by col2 having col2>n'a' order by col2 desc; 
 
 select col1,lead(col2,1) over(order by col2) prev_col2 from t2 group by col2 order by 1 limit 1;
 
