@@ -1,0 +1,971 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+200
+===================================================
+500
+===================================================
+200
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: a LEFT JOIN whose ON reads only its own table, joined after a later CROSS JOIN table that another ON reads; result = 1 row     
+
+===================================================
+ca    ca    ca    ca    ca    ca    ca    
+1     null     1     null     1     1     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?] AND term[?]
+                 outer: nl-join (left outer join)
+                            outer: nl-join (left outer join)
+                                       edge:  term[?] AND term[?]
+                                       outer: nl-join (cross join)
+                                                  outer: idx-join (inner join)
+                                                             outer: nl-join (inner join)
+                                                                        edge:  term[?]
+                                                                        outer: sscan
+                                                                                   class: te node[?]
+                                                                                   cost:  ? card ?
+                                                                        inner: sscan
+                                                                                   class: ta node[?]
+                                                                                   sargs: term[?]
+                                                                                   cost:  ? card ?
+                                                                        cost:  ? card ?
+                                                             inner: iscan
+                                                                        class: tc node[?]
+                                                                        index: i_tc_ca term[?] (covers)
+                                                                        cost:  ? card ?
+                                                             cost:  ? card ?
+                                                  inner: sscan
+                                                             class: tf node[?]
+                                                             cost:  ? card ?
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: tg node[?]
+                                                  sargs: term[?] AND term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: tb node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: td node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.ca, tb.ca, tc.ca, td.ca, te.ca, tf.ca, tg.ca from ta ta left outer join tb tb on (tb.ca>tb.cb) cross join tc tc left outer join td td on td.cb=tc.ca and td.ca=tb.ca inner join te te on te.cb=tc.ca and te.ca=ta.ca cross join tf tf left outer join tg tg on tg.cb=tf.ca and tg.ca=te.ca order by ?, ?, ?, ?, ?, ?, ?
+===================================================
+    
+Case 2: Case 1 with the ORDERED hint; result = same row as Case 1     
+
+===================================================
+ca    ca    ca    ca    ca    ca    ca    
+1     null     1     null     1     1     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?] AND term[?]
+                 outer: nl-join (cross join)
+                            outer: parallel hash-join (inner join)
+                                       edge:  term[?] AND term[?]
+                                       outer: parallel hash-join (left outer join)
+                                                  edge:  term[?] AND term[?]
+                                                  outer: nl-join (cross join)
+                                                             outer: nl-join (left outer join)
+                                                                        outer: sscan
+                                                                                   class: ta node[?]
+                                                                                   cost:  ? card ?
+                                                                        inner: sscan
+                                                                                   class: tb node[?]
+                                                                                   sargs: term[?]
+                                                                                   cost:  ? card ?
+                                                                        cost:  ? card ?
+                                                             inner: sscan
+                                                                        class: tc node[?]
+                                                                        cost:  ? card ?
+                                                             cost:  ? card ?
+                                                  inner: sscan
+                                                             class: td node[?]
+                                                             cost:  ? card ?
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: te node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: tf node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: tg node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ ta.ca, tb.ca, tc.ca, td.ca, te.ca, tf.ca, tg.ca from ta ta left outer join tb tb on (tb.ca>tb.cb) cross join tc tc left outer join td td on td.cb=tc.ca and td.ca=tb.ca inner join te te on te.cb=tc.ca and te.ca=ta.ca cross join tf tf left outer join tg tg on tg.cb=tf.ca and tg.ca=te.ca order by ?, ?, ?, ?, ?, ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+2
+===================================================
+2
+===================================================
+3
+===================================================
+2
+===================================================
+0
+===================================================
+    
+Case 3: an INNER JOIN whose ON reads the NULL-padded table of a LEFT JOIN and the table after a CROSS JOIN in one condition; result = 4, 4     
+
+===================================================
+count(*)    count(tb.ca)    
+4     4     
+
+Query plan:
+nl-join (cross join)
+    outer: nl-join (cross join)
+               outer: nl-join (left outer join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: ta node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: tb node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: tc node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: td node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*), count(tb.ca) from ta ta left outer join tb tb on tb.ca=ta.ca cross join tc tc inner join td td on td.cb=tb.cb+tc.cb
+===================================================
+    
+Case 4: Case 3 with a second condition that joins the inner table to the table after the CROSS JOIN; result = 2, 2     
+
+===================================================
+count(*)    count(tb.ca)    
+2     2     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (cross join)
+               outer: nl-join (left outer join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: ta node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: tb node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: tc node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: td node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*), count(tb.ca) from ta ta left outer join tb tb on tb.ca=ta.ca cross join tc tc inner join td td on td.cb=tb.cb+tc.cb and td.ca=tc.ca+?
+===================================================
+    
+Case 5: Case 3 followed by a LEFT JOIN; result = 4, 4, 3     
+
+===================================================
+count(*)    count(tb.ca)    count(t2.ca)    
+4     4     3     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: nl-join (cross join)
+               outer: nl-join (cross join)
+                          outer: nl-join (left outer join)
+                                     edge:  term[?]
+                                     outer: sscan
+                                                class: ta node[?]
+                                                cost:  ? card ?
+                                     inner: sscan
+                                                class: tb node[?]
+                                                sargs: term[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: tc node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: td node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), count(tb.ca), count(t?.ca) from ta ta left outer join tb tb on tb.ca=ta.ca cross join tc tc inner join td td on td.cb=tb.cb+tc.cb left outer join tb t? on t?.ca=td.ca
+===================================================
+    
+Case 6: Case 3 with a table between the CROSS JOINs that no ON reads; result = 8, 8     
+
+===================================================
+count(*)    count(tb.ca)    
+8     8     
+
+Query plan:
+nl-join (cross join)
+    outer: nl-join (cross join)
+               outer: nl-join (cross join)
+                          outer: nl-join (left outer join)
+                                     edge:  term[?]
+                                     outer: sscan
+                                                class: ta node[?]
+                                                cost:  ? card ?
+                                     inner: sscan
+                                                class: tb node[?]
+                                                sargs: term[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: tc node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: td node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tx node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), count(tb.ca) from ta ta left outer join tb tb on tb.ca=ta.ca cross join tx tx cross join tc tc inner join td td on td.cb=tb.cb+tc.cb
+===================================================
+    
+Case 7: Case 3 with an INNER JOIN in place of the LEFT JOIN; result = 4, 4     
+
+===================================================
+count(*)    count(tb.ca)    
+4     4     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+3
+===================================================
+3
+===================================================
+3
+===================================================
+3
+===================================================
+3
+===================================================
+3
+===================================================
+0
+===================================================
+    
+Case 8: two LEFT JOIN chains around a CROSS JOIN, bridged by a later INNER JOIN and a LEFT JOIN; result = 4, 3     
+
+===================================================
+count(*)    count(tg.ca)    
+4     3     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?] AND term[?]
+    outer: nl-join (inner join)
+               edge:  term[?] AND term[?]
+               outer: nl-join (left outer join)
+                          edge:  term[?]
+                          outer: nl-join (cross join)
+                                     outer: nl-join (inner join)
+                                                edge:  term[?]
+                                                outer: nl-join (inner join)
+                                                           edge:  term[?]
+                                                           outer: nl-join (left outer join)
+                                                                      edge:  term[?]
+                                                                      outer: sscan
+                                                                                 class: ta node[?]
+                                                                                 cost:  ? card ?
+                                                                      inner: sscan
+                                                                                 class: tb node[?]
+                                                                                 sargs: term[?]
+                                                                                 cost:  ? card ?
+                                                                      cost:  ? card ?
+                                                           inner: sscan
+                                                                      class: tc node[?]
+                                                                      sargs: term[?]
+                                                                      cost:  ? card ?
+                                                           cost:  ? card ?
+                                                inner: sscan
+                                                           class: tx node[?]
+                                                           sargs: term[?]
+                                                           cost:  ? card ?
+                                                cost:  ? card ?
+                                     inner: sscan
+                                                class: td node[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: te node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: tf node[?]
+                          sargs: term[?] AND term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tg node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), count(tg.ca) from ta ta left outer join tb tb on tb.ca=ta.ca inner join tc tc on tc.ca=tb.ca cross join td td left outer join te te on te.ca=td.ca inner join tf tf on tf.ca=te.ca inner join tx tx on tx.cb=tf.cb and tx.ca=tc.cb left outer join tg tg on tg.cb=tf.cb and tg.ca=tc.cb
+===================================================
+    
+Case 9: Case 8 without the last LEFT JOIN; result = 4, 4     
+
+===================================================
+count(*)    count(tx.ca)    
+4     4     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: nl-join (left outer join)
+               edge:  term[?]
+               outer: nl-join (cross join)
+                          outer: nl-join (inner join)
+                                     edge:  term[?]
+                                     outer: nl-join (inner join)
+                                                edge:  term[?]
+                                                outer: nl-join (left outer join)
+                                                           edge:  term[?]
+                                                           outer: sscan
+                                                                      class: ta node[?]
+                                                                      cost:  ? card ?
+                                                           inner: sscan
+                                                                      class: tb node[?]
+                                                                      sargs: term[?]
+                                                                      cost:  ? card ?
+                                                           cost:  ? card ?
+                                                inner: sscan
+                                                           class: tc node[?]
+                                                           sargs: term[?]
+                                                           cost:  ? card ?
+                                                cost:  ? card ?
+                                     inner: sscan
+                                                class: tx node[?]
+                                                sargs: term[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: td node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: te node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tf node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), count(tx.ca) from ta ta left outer join tb tb on tb.ca=ta.ca inner join tc tc on tc.ca=tb.ca cross join td td left outer join te te on te.ca=td.ca inner join tf tf on tf.ca=te.ca inner join tx tx on tx.cb=tf.cb and tx.ca=tc.cb
+===================================================
+    
+Case 10: Case 8 with a RIGHT JOIN in place of the last LEFT JOIN; result = 4, 3, 4     
+
+===================================================
+count(*)    count(tc.ca)    count(tg.ca)    
+4     3     4     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?] AND term[?]
+    outer: sscan
+               class: tg node[?]
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: nl-join (inner join)
+                            edge:  term[?] AND term[?]
+                            outer: nl-join (left outer join)
+                                       edge:  term[?]
+                                       outer: nl-join (cross join)
+                                                  outer: nl-join (inner join)
+                                                             edge:  term[?]
+                                                             outer: nl-join (inner join)
+                                                                        edge:  term[?]
+                                                                        outer: nl-join (left outer join)
+                                                                                   edge:  term[?]
+                                                                                   outer: sscan
+                                                                                              class: ta node[?]
+                                                                                              cost:  ? card ?
+                                                                                   inner: sscan
+                                                                                              class: tb node[?]
+                                                                                              sargs: term[?]
+                                                                                              cost:  ? card ?
+                                                                                   cost:  ? card ?
+                                                                        inner: sscan
+                                                                                   class: tc node[?]
+                                                                                   sargs: term[?]
+                                                                                   cost:  ? card ?
+                                                                        cost:  ? card ?
+                                                             inner: sscan
+                                                                        class: tx node[?]
+                                                                        sargs: term[?]
+                                                                        cost:  ? card ?
+                                                             cost:  ? card ?
+                                                  inner: sscan
+                                                             class: td node[?]
+                                                             cost:  ? card ?
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: te node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: tf node[?]
+                                       sargs: term[?] AND term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), count(tc.ca), count(tg.ca) from ta ta left outer join tb tb on tb.ca=ta.ca inner join tc tc on tc.ca=tb.ca cross join td td left outer join te te on te.ca=td.ca inner join tf tf on tf.ca=te.ca inner join tx tx on tx.cb=tf.cb and tx.ca=tc.cb right outer join tg tg on tg.cb=tf.cb and tg.ca=tc.cb
+===================================================
+    
+Case 11: Case 9 with a comma in place of the CROSS JOIN and the condition on tc in the WHERE; result = same counts as Case 9     
+
+===================================================
+count(*)    count(tx.ca)    
+4     4     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: nl-join (left outer join)
+               edge:  term[?]
+               outer: nl-join (cross join)
+                          outer: nl-join (inner join)
+                                     edge:  term[?]
+                                     outer: nl-join (inner join)
+                                                edge:  term[?]
+                                                outer: nl-join (left outer join)
+                                                           edge:  term[?]
+                                                           outer: sscan
+                                                                      class: ta node[?]
+                                                                      cost:  ? card ?
+                                                           inner: sscan
+                                                                      class: tb node[?]
+                                                                      sargs: term[?]
+                                                                      cost:  ? card ?
+                                                           cost:  ? card ?
+                                                inner: sscan
+                                                           class: tc node[?]
+                                                           sargs: term[?]
+                                                           cost:  ? card ?
+                                                cost:  ? card ?
+                                     inner: sscan
+                                                class: tx node[?]
+                                                sargs: term[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: td node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: te node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tf node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), count(tx.ca) from ta ta left outer join tb tb on tb.ca=ta.ca inner join tc tc on tc.ca=tb.ca, td td left outer join te te on te.ca=td.ca inner join tf tf on tf.ca=te.ca inner join tx tx on tx.cb=tf.cb where tx.ca=tc.cb
+===================================================
+    
+Case 12: Case 9 with a table between the two chains that no condition reads; result = 12, 12     
+
+===================================================
+count(*)    count(tx.ca)    
+12     12     
+
+Query plan:
+nl-join (cross join)
+    outer: nl-join (inner join)
+               edge:  term[?] AND term[?]
+               outer: nl-join (left outer join)
+                          edge:  term[?]
+                          outer: nl-join (cross join)
+                                     outer: nl-join (inner join)
+                                                edge:  term[?]
+                                                outer: nl-join (inner join)
+                                                           edge:  term[?]
+                                                           outer: nl-join (left outer join)
+                                                                      edge:  term[?]
+                                                                      outer: sscan
+                                                                                 class: ta node[?]
+                                                                                 cost:  ? card ?
+                                                                      inner: sscan
+                                                                                 class: tb node[?]
+                                                                                 sargs: term[?]
+                                                                                 cost:  ? card ?
+                                                                      cost:  ? card ?
+                                                           inner: sscan
+                                                                      class: tc node[?]
+                                                                      sargs: term[?]
+                                                                      cost:  ? card ?
+                                                           cost:  ? card ?
+                                                inner: sscan
+                                                           class: tx node[?]
+                                                           sargs: term[?]
+                                                           cost:  ? card ?
+                                                cost:  ? card ?
+                                     inner: sscan
+                                                class: td node[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: te node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: tf node[?]
+                          sargs: term[?] AND term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tg node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), count(tx.ca) from ta ta left outer join tb tb on tb.ca=ta.ca inner join tc tc on tc.ca=tb.ca cross join tg tg cross join td td left outer join te te on te.ca=td.ca inner join tf tf on tf.ca=te.ca inner join tx tx on tx.cb=tf.cb and tx.ca=tc.cb
+===================================================
+    
+Case 13: Case 11 with a table between the two chains that no condition reads; result = 12, 12     
+
+===================================================
+count(*)    count(tx.ca)    
+12     12     
+
+Query plan:
+nl-join (cross join)
+    outer: nl-join (inner join)
+               edge:  term[?] AND term[?]
+               outer: nl-join (left outer join)
+                          edge:  term[?]
+                          outer: nl-join (cross join)
+                                     outer: nl-join (inner join)
+                                                edge:  term[?]
+                                                outer: nl-join (inner join)
+                                                           edge:  term[?]
+                                                           outer: nl-join (left outer join)
+                                                                      edge:  term[?]
+                                                                      outer: sscan
+                                                                                 class: ta node[?]
+                                                                                 cost:  ? card ?
+                                                                      inner: sscan
+                                                                                 class: tb node[?]
+                                                                                 sargs: term[?]
+                                                                                 cost:  ? card ?
+                                                                      cost:  ? card ?
+                                                           inner: sscan
+                                                                      class: tc node[?]
+                                                                      sargs: term[?]
+                                                                      cost:  ? card ?
+                                                           cost:  ? card ?
+                                                inner: sscan
+                                                           class: tx node[?]
+                                                           sargs: term[?]
+                                                           cost:  ? card ?
+                                                cost:  ? card ?
+                                     inner: sscan
+                                                class: td node[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: te node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: tf node[?]
+                          sargs: term[?] AND term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tg node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), count(tx.ca) from ta ta left outer join tb tb on tb.ca=ta.ca inner join tc tc on tc.ca=tb.ca, tg tg, td td left outer join te te on te.ca=td.ca inner join tf tf on tf.ca=te.ca inner join tx tx on tx.cb=tf.cb where tx.ca=tc.cb
+===================================================
+    
+Case 14: Case 12 with two such tables; result = 36, 36     
+
+===================================================
+count(*)    count(tx.ca)    
+36     36     
+
+Query plan:
+nl-join (cross join)
+    outer: nl-join (cross join)
+               outer: nl-join (inner join)
+                          edge:  term[?] AND term[?]
+                          outer: nl-join (left outer join)
+                                     edge:  term[?]
+                                     outer: nl-join (cross join)
+                                                outer: nl-join (inner join)
+                                                           edge:  term[?]
+                                                           outer: nl-join (inner join)
+                                                                      edge:  term[?]
+                                                                      outer: nl-join (left outer join)
+                                                                                 edge:  term[?]
+                                                                                 outer: sscan
+                                                                                            class: ta node[?]
+                                                                                            cost:  ? card ?
+                                                                                 inner: sscan
+                                                                                            class: tb node[?]
+                                                                                            sargs: term[?]
+                                                                                            cost:  ? card ?
+                                                                                 cost:  ? card ?
+                                                                      inner: sscan
+                                                                                 class: tc node[?]
+                                                                                 sargs: term[?]
+                                                                                 cost:  ? card ?
+                                                                      cost:  ? card ?
+                                                           inner: sscan
+                                                                      class: tx node[?]
+                                                                      sargs: term[?]
+                                                                      cost:  ? card ?
+                                                           cost:  ? card ?
+                                                inner: sscan
+                                                           class: td node[?]
+                                                           cost:  ? card ?
+                                                cost:  ? card ?
+                                     inner: sscan
+                                                class: te node[?]
+                                                sargs: term[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: tf node[?]
+                                     sargs: term[?] AND term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: tg node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), count(tx.ca) from ta ta left outer join tb tb on tb.ca=ta.ca inner join tc tc on tc.ca=tb.ca cross join tg tg cross join tg t? cross join td td left outer join te te on te.ca=td.ca inner join tf tf on tf.ca=te.ca inner join tx tx on tx.cb=tf.cb and tx.ca=tc.cb
+===================================================
+    
+Case 15: the ORDERED hint on a table after a CROSS JOIN that no condition joins to the table before it; result = (1, 9, 9), (2, 9, 9)     
+
+===================================================
+ca    count(*)    count(tc.ca)    
+1     9     9     
+2     9     9     
+
+Query plan:
+temp(group by)
+    subplan: nl-join (cross join)
+                 outer: nl-join (inner join)
+                            edge:  term[?] AND term[?]
+                            outer: nl-join (cross join)
+                                       outer: sscan
+                                                  class: ta node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: tb node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: tc node[?]
+                                       sargs: term[?] AND term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: td node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ ta.ca, count(*), count(tc.ca) from ta ta cross join tb tb inner join tc tc cross join td td where tc.cb=ta.cb and tc.ca=ta.ca group by ta.ca
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+200
+===================================================
+200
+===================================================
+0
+===================================================
+    
+Case 16: a LEFT JOIN after two commas, where the planner visits every table without a dummy join term; result = 1 row     
+
+===================================================
+ca    ca    ca    ca    
+1     2     1     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: nl-join (inner join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: ta node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: tc node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: tb node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: td node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.ca, tb.ca, tc.ca, td.ca from ta ta, tb tb, tc tc left outer join td td on td.ca=tc.ca where tb.cb=tc.cb and ta.ca=tc.ca order by ?, ?, ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+2
+===================================================
+2
+===================================================
+3
+===================================================
+0
+===================================================
+    
+Case 17: an INNER JOIN whose ON joins the NULL-padded table of a LEFT JOIN and the table before a CROSS JOIN, one join term each; result = 4 rows     
+
+===================================================
+ca    ca    cb    cb    
+1     1     1     1     
+1     1     2     1     
+2     1     1     2     
+2     1     2     2     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: nl-join (left outer join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: tb node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: tc node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: td node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: ta node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.ca, tb.ca, tc.cb, td.cb from ta ta cross join tb tb left outer join tc tc on tc.ca=tb.ca inner join td td on td.cb=ta.cb and td.ca=tc.ca order by ?, ?, ?, ?
+===================================================
+    
+Case 18: Case 17 with a LEADING hint that joins the inner table before the table before the CROSS JOIN; result = same rows as Case 17     
+
+===================================================
+ca    ca    cb    cb    
+1     1     1     1     
+1     1     2     1     
+2     1     1     2     
+2     1     2     2     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: nl-join (left outer join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: tb node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: tc node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: td node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: ta node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(tb, tc, td, ta) */ ta.ca, tb.ca, tc.cb, td.cb from ta ta cross join tb tb left outer join tc tc on tc.ca=tb.ca inner join td td on td.cb=ta.cb and td.ca=tc.ca order by ?, ?, ?, ?
+===================================================
+0
