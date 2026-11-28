@@ -591,23 +591,22 @@ temp(order by)
                             cost:  ? card ?
                  inner: temp
                             order: UNORDERED
-                            subplan: idx-join (left outer join)
+                            subplan: idx-join (inner join)
                                          outer: sscan
                                                     class: s node[?]
                                                     cost:  ? card ?
                                          inner: iscan
                                                     class: t node[?]
                                                     index: t_a_b_cd term[?] (covers)
-                                                    filtr: term[?]
+                                                    filtr: term[?] AND term[?]
                                                     cost:  ? card ?
                                          cost:  ? card ?
                             cost:  ? card ?
-                 during:term[?]
                  cost:  ? card ?
     sort:  ? desc, ? desc
     cost:  ? card ?
 Query stmt:
-select t.a, t.b, t.c, s.x, s.y, u.x, u.y from t t right outer join s s on t.a<>t.a+t.a and t.a=s.x right outer join u u on t.a<>t.a+t.a and t.a=u.x order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+select t.a, t.b, t.c, s.x, s.y, u.x, u.y from t t inner join s s on t.a<>t.a+t.a and t.a=s.x right outer join u u on t.a<>t.a+t.a and t.a=u.x order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 a    b    c    x    y    
 1     1.0     1     1     1     

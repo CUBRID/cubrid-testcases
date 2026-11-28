@@ -458,11 +458,11 @@ Query Plan:
   NESTED LOOPS (left outer join)
     TABLE SCAN (cte_a)
     SORT (temp)
-      NESTED LOOPS (left outer join)
+      NESTED LOOPS (inner join)
         TABLE SCAN (a)
         TABLE SCAN (cte_b)
 
-  rewritten query: select count(*) from [dba.tbl_a] a left outer join (select [dba.tbl_b].i from [dba.tbl_b] [dba.tbl_b]) cte_b (i) on a.i=cte_b.i right outer join (select [dba.tbl_a].i from [dba.tbl_a] [dba.tbl_a]) cte_a (i) on cte_b.i=cte_a.i
+  rewritten query: select count(*) from [dba.tbl_a] a inner join (select [dba.tbl_b].i from [dba.tbl_b] [dba.tbl_b]) cte_b (i) on a.i=cte_b.i right outer join (select [dba.tbl_a].i from [dba.tbl_a] [dba.tbl_a]) cte_a (i) on cte_b.i=cte_a.i
 
 
 Trace Statistics:
