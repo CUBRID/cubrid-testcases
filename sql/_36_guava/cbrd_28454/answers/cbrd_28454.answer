@@ -1,0 +1,193 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+2
+===================================================
+4
+===================================================
+8
+===================================================
+16
+===================================================
+32
+===================================================
+64
+===================================================
+128
+===================================================
+256
+===================================================
+512
+===================================================
+1024
+===================================================
+2048
+===================================================
+4096
+===================================================
+8192
+===================================================
+16384
+===================================================
+32768
+===================================================
+0
+===================================================
+50000
+===================================================
+0
+===================================================
+800
+===================================================
+4
+===================================================
+6
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+rn    src_nm    server_nm    ceck_sql    mngr_email    upd_dt    knd_nm    sttus_nm    
+1     DATASRC_000000000001     server 1     select 1     mgr1@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     2019-01-01 00:58:20     code name 378     code name 362     
+2     DATASRC_000000000002     server 2     select 2     mgr2@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     2019-01-01 01:56:40     code name 379     code name 361     
+3     DATASRC_000000000003     server 3     select 3     mgr3@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     2019-01-01 02:55:00     code name 380     code name 362     
+4     DATASRC_000000000004     server 4     select 4     mgr4@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     2019-01-01 03:53:20     code name 377     code name 361     
+5     DATASRC_000000000005     server 5     select 5     mgr5@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     2019-01-01 04:51:40     code name 378     code name 362     
+6     DATASRC_000000000006     server 6     select 6     mgr6@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     2019-01-01 05:50:00     code name 379     code name 361     
+7     DATASRC_000000000007     server 7     select 7     mgr7@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     2019-01-01 06:48:20     code name 380     code name 362     
+8     DATASRC_000000000008     server 8     select 8     mgr8@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     2019-01-01 07:46:40     code name 377     code name 361     
+9     DATASRC_000000000009     server 9     select 9     mgr9@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     2019-01-01 08:45:00     code name 378     code name 362     
+10     DATASRC_000000000010     server 10     select 10     mgr10@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     2019-01-01 09:43:20     code name 379     code name 361     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      INDEX SCAN (z.pk_t?_dbm_src_nm) ()
+      INDEX SCAN (c.pk_t?_code) (key range: z.sttus=c.codekey range: c.code_id= ?:? )
+    INDEX SCAN (b.pk_t?_code) (key range: (z.dbms_knd=b.code)key range: b.code_id= ?:? )
+  skip order by: true
+
+  rewritten query: select (orderby_num()), z.src_nm, z.server_nm, z.ceck_sql, z.mngr_email, ( to_char(z.upd_dt, 'YYYY-MM-DD HH?:MI:SS')), b.code_nm, c.code_nm from [dba.t?_dbm] z, [dba.t?_code] b, [dba.t?_code] c where (z.dbms_knd=b.code) and z.sttus=c.code and c.code_id= ?:?  and b.code_id= ?:?  order by ? for (orderby_num()) between  ?:? +? and  ?:? + ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?_dbm.pk_t?_dbm_src_nm), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.t?_code.pk_t?_code), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SCAN (index: dba.t?_code.pk_t?_code), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+rn    src_nm    server_nm    ceck_sql    mngr_email    upd_dt    knd_nm    sttus_nm    
+5001     DATASRC_000000005001     server 1     select 1     mgr5001@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     2019-07-22 14:05:00     code name 378     code name 362     
+5002     DATASRC_000000005002     server 2     select 2     mgr5002@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     2019-07-22 15:03:20     code name 379     code name 361     
+5003     DATASRC_000000005003     server 3     select 3     mgr5003@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     2019-07-22 16:01:40     code name 380     code name 362     
+5004     DATASRC_000000005004     server 4     select 4     mgr5004@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     2019-07-22 17:00:00     code name 377     code name 361     
+5005     DATASRC_000000005005     server 5     select 5     mgr5005@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     2019-07-22 17:58:20     code name 378     code name 362     
+5006     DATASRC_000000005006     server 6     select 6     mgr5006@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     2019-07-22 18:56:40     code name 379     code name 361     
+5007     DATASRC_000000005007     server 7     select 7     mgr5007@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     2019-07-22 19:55:00     code name 380     code name 362     
+5008     DATASRC_000000005008     server 8     select 8     mgr5008@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     2019-07-22 20:53:20     code name 377     code name 361     
+5009     DATASRC_000000005009     server 9     select 9     mgr5009@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     2019-07-22 21:51:40     code name 378     code name 362     
+5010     DATASRC_000000005010     server 10     select 10     mgr5010@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     2019-07-22 22:50:00     code name 379     code name 361     
+
+===================================================
+0
+===================================================
+0
+===================================================
+rn    src_nm    knd_nm    sttus_nm    
+21     DATASRC_000000000021     code name 378     code name 362     
+22     DATASRC_000000000022     code name 379     code name 361     
+23     DATASRC_000000000023     code name 380     code name 362     
+24     DATASRC_000000000024     code name 377     code name 361     
+25     DATASRC_000000000025     code name 378     code name 362     
+26     DATASRC_000000000026     code name 379     code name 361     
+27     DATASRC_000000000027     code name 380     code name 362     
+28     DATASRC_000000000028     code name 377     code name 361     
+29     DATASRC_000000000029     code name 378     code name 362     
+30     DATASRC_000000000030     code name 379     code name 361     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      INDEX SCAN (z.pk_t?_dbm_src_nm) ()
+      INDEX SCAN (c.pk_t?_code) (key range: z.sttus=c.codekey range: c.code_id= ?:? )
+    INDEX SCAN (b.pk_t?_code) (key range: (z.dbms_knd=b.code)key range: b.code_id= ?:? )
+  skip order by: true
+
+  rewritten query: select (orderby_num()), z.src_nm, b.code_nm, c.code_nm from [dba.t?_dbm] z, [dba.t?_code] b, [dba.t?_code] c where (z.dbms_knd=b.code) and z.sttus=c.code and c.code_id= ?:?  and b.code_id= ?:?  order by ? for (orderby_num()) between  ?:?  and  ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?_dbm.pk_t?_dbm_src_nm), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.t?_code.pk_t?_code), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SCAN (index: dba.t?_code.pk_t?_code), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+rn    src_nm    knd_nm    sttus_nm    
+1     DATASRC_000000050000     code name 377     code name 361     
+2     DATASRC_000000049999     code name 380     code name 362     
+3     DATASRC_000000049998     code name 379     code name 361     
+4     DATASRC_000000049997     code name 378     code name 362     
+5     DATASRC_000000049996     code name 377     code name 361     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      INDEX SCAN (z.pk_t?_dbm_src_nm) (desc_index: true)
+      INDEX SCAN (c.pk_t?_code) (key range: z.sttus=c.codekey range: c.code_id= ?:? )
+    INDEX SCAN (b.pk_t?_code) (key range: (z.dbms_knd=b.code)key range: b.code_id= ?:? )
+  skip order by: true
+
+  rewritten query: select (orderby_num()), z.src_nm, b.code_nm, c.code_nm from [dba.t?_dbm] z, [dba.t?_code] b, [dba.t?_code] c where (z.dbms_knd=b.code) and z.sttus=c.code and c.code_id= ?:?  and b.code_id= ?:?  order by ? desc  for (orderby_num())<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?_dbm.pk_t?_dbm_src_nm), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.t?_code.pk_t?_code), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SCAN (index: dba.t?_code.pk_t?_code), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+Error:-539
+===================================================
+0
+===================================================
+0
+===================================================
+0
