@@ -61,8 +61,9 @@
  *    Case 31: the values at execution empty every operand of a nested set operation - returns no row
  *    Case 32: CREATE TABLE ... AS WITH ... over a set operation that folds - the table takes the columns and rows
  *             of the query
- *    Case 33: an empty operand already folded into a value tells no collation - a string column folds as before,
- *             without DISTINCT, and keeps every row; one still a query, in a derived table, tells it
+ *    Case 33: an empty operand whose WHERE is the literal FALSE, or a set operation of such operands, stays a
+ *             query until the set operation folds it and tells its collation - the rows are compared in it
+ *             and the duplicates removed, as for the twin (CBRD-28242)
  *    Case 34: an operand empty only once a view is merged, in a subquery that an expression reads - the folded
  *             SELECT has the type of its column
  *    Case 35: an operand already folded into a value beside an ORDER BY key outside the select list - the key is
@@ -385,7 +386,7 @@ drop table t_28019_d, t_28019_e;
 -- and remove the duplicate 'a'); an operand that is still a query when the set operation folds, here in a derived
 -- table, tells its collation, and the rows are compared in utf8_bin. The rows of a derived table are ordered by
 -- their bytes, those of the statement without ORDER BY come in the order of the table
-evaluate 'Case 33: an empty operand already folded into a value tells no collation; result = a, A, b, a as before, then A, a, b for its twin; A, a, b each; A, a, a, b as before, then A, a, b for its twin';
+evaluate 'Case 33: an empty operand by the literal FALSE tells its collation; result = A, a, b for each query and its twin';
 (select c collate utf8_bin from t_ci where false) union select c from t_ci;
 (select c collate utf8_bin from t_ci where length (c) > 100) union select c from t_ci order by 1;
 select c from ((select c collate utf8_bin c from t_ci where false) union (select c from t_ci)) x order by hex (c);
