@@ -1,0 +1,967 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+20
+===================================================
+0
+===================================================
+2000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+S1: FROM reference + uncorrelated subquery reference (TPC-H Q15 shape)     
+
+===================================================
+s_suppkey    s_name    total_revenue    
+1     Supplier#1     4076000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey)
+
+  TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select max([dba.v_?_rev].total_revenue) from (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no, total_revenue))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.v_?_rev)
+      INDEX SCAN (dba.t_?_su.pk_t_?_su_s_suppkey) (key range: [dba.t_?_su].s_suppkey=[dba.v_?_rev].supplier_no)
+
+  rewritten query: select /*+ PARALLEL(?) */ [dba.t_?_su].s_suppkey, [dba.t_?_su].s_name, [dba.v_?_rev].total_revenue from [dba.t_?_su] [dba.t_?_su], (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no, total_revenue) where [dba.t_?_su].s_suppkey=[dba.v_?_rev].supplier_no and [dba.v_?_rev].total_revenue=(select max([dba.v_?_rev].total_revenue) from (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no, total_revenue)) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_?_su.pk_t_?_su_s_suppkey), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+S2: three FROM references     
+
+===================================================
+count(*)    sum(a.total_revenue)    sum(c.total_revenue)    
+20     70251570     70251570     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (a)
+
+  rewritten query: (select a.l_suppkey, sum(a.l_price*(?-a.l_disc)) from [dba.t_?_li] a where (a.l_shipdate>= ?:?  and a.l_shipdate< ?:? ) group by a.l_suppkey)
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (c)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum(a.total_revenue), sum(c.total_revenue) from (select a.l_suppkey, sum(a.l_price*(?-a.l_disc)) from [dba.t_?_li] a where (a.l_shipdate>= ?:?  and a.l_shipdate< ?:? ) group by a.l_suppkey) a (supplier_no, total_revenue), (select b.l_suppkey, sum(b.l_price*(?-b.l_disc)) from [dba.t_?_li] b where (b.l_shipdate>= ?:?  and b.l_shipdate< ?:? ) group by b.l_suppkey) b (supplier_no, total_revenue), (select c.l_suppkey, sum(c.l_price*(?-c.l_disc)) from [dba.t_?_li] c where (c.l_shipdate>= ?:?  and c.l_shipdate< ?:? ) group by c.l_suppkey) c (supplier_no, total_revenue) where a.supplier_no=b.supplier_no and b.supplier_no=c.supplier_no
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+S3: FROM reference + reference in a derived table     
+
+===================================================
+count(*)    
+20     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (r)
+
+  rewritten query: (select r.l_suppkey from [dba.t_?_li] r where (r.l_shipdate>= ?:?  and r.l_shipdate< ?:? ) group by r.l_suppkey)
+
+  SORT (distinct)
+    TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select distinct [dba.v_?_rev].supplier_no from (select [dba.v_?_rev].l_suppkey from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no))
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (r)
+    TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from (select r.l_suppkey from [dba.t_?_li] r where (r.l_shipdate>= ?:?  and r.l_shipdate< ?:? ) group by r.l_suppkey) r (supplier_no), (select distinct [dba.v_?_rev].supplier_no from (select [dba.v_?_rev].l_suppkey from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no)) d (supplier_no) where d.supplier_no=r.supplier_no
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+S4: one reference in each UNION ALL operand     
+
+===================================================
+max(total_revenue)    
+2886740     
+4076000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey)
+
+  TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: select /*+ PARALLEL(?) */ max([dba.v_?_rev].total_revenue) from (select sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (total_revenue)
+
+  TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: select min([dba.v_?_rev].total_revenue) from (select sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (total_revenue)
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+S5: references using different columns     
+
+===================================================
+total_revenue    supplier_no    
+4076000     1     
+3913470     2     
+3879820     3     
+4034230     4     
+3905280     5     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (a)
+
+  rewritten query: (select a.l_suppkey, sum(a.l_price*(?-a.l_disc)) from [dba.t_?_li] a where (a.l_shipdate>= ?:?  and a.l_shipdate< ?:? ) group by a.l_suppkey)
+
+  TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select count(*)/ cast(? as bigint) from (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no, total_revenue))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (b)
+      TABLE SCAN (a)
+
+  rewritten query: select /*+ PARALLEL(?) */ a.total_revenue, b.supplier_no from (select a.l_suppkey, sum(a.l_price*(?-a.l_disc)) from [dba.t_?_li] a where (a.l_shipdate>= ?:?  and a.l_shipdate< ?:? ) group by a.l_suppkey) a (supplier_no, total_revenue), (select b.l_suppkey, sum(b.l_price*(?-b.l_disc)) from [dba.t_?_li] b where (b.l_shipdate>= ?:?  and b.l_shipdate< ?:? ) group by b.l_suppkey) b (supplier_no, total_revenue) where a.supplier_no=b.supplier_no and (b.supplier_no<=(select count(*)/ cast(? as bigint) from (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no, total_revenue))) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+S6: references in IN and HAVING subqueries     
+
+===================================================
+count(*)    
+11     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey)
+
+  TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select avg([dba.v_?_rev].total_revenue) from (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no, total_revenue))
+
+  SORT (distinct)
+    TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select distinct [dba.v_?_rev].supplier_no from (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no, total_revenue) where ([dba.v_?_rev].total_revenue>(select avg([dba.v_?_rev].total_revenue) from (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no, total_revenue))))
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (av?)
+    INDEX SCAN (dba.t_?_su.pk_t_?_su_s_suppkey) (key range: [dba.t_?_su].s_suppkey=av?.av_?, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_?_su] [dba.t_?_su], (select distinct [dba.v_?_rev].supplier_no from (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no, total_revenue) where ([dba.v_?_rev].total_revenue>(select avg([dba.v_?_rev].total_revenue) from (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no, total_revenue)))) av? (av_?) where [dba.t_?_su].s_suppkey=av?.av_?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_?_su.pk_t_?_su_s_suppkey), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+mod(s_suppkey, 3)    count(*)    
+0     6     
+1     7     
+2     7     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select [dba.v_?_rev].l_suppkey from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey)
+
+  TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select count(*) from (select [dba.v_?_rev].l_suppkey from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no))
+
+  TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select max([dba.v_?_rev].supplier_no) from (select [dba.v_?_rev].l_suppkey from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no))
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.t_?_su)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod([dba.t_?_su].s_suppkey, ?), count(*) from [dba.t_?_su] [dba.t_?_su] group by  mod([dba.t_?_su].s_suppkey, ?) having max([dba.t_?_su].s_suppkey)<=(select max([dba.v_?_rev].supplier_no) from (select [dba.v_?_rev].l_suppkey from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no)) and count(*)<(select count(*) from (select [dba.v_?_rev].l_suppkey from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no)) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_?_su), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+S7: references in nested subqueries     
+
+===================================================
+count(*)    
+6     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey)
+
+  TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select count(*)/ cast(? as bigint) from (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no, total_revenue))
+
+  TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select avg([dba.v_?_rev].total_revenue) from (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no, total_revenue) where ([dba.v_?_rev].supplier_no<=(select count(*)/ cast(? as bigint) from (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no, total_revenue))))
+
+  SORT (distinct)
+    TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select distinct [dba.v_?_rev].supplier_no from (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no, total_revenue) where ([dba.v_?_rev].total_revenue>=(select avg([dba.v_?_rev].total_revenue) from (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no, total_revenue) where ([dba.v_?_rev].supplier_no<=(select count(*)/ cast(? as bigint) from (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no, total_revenue))))))
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (av?)
+    INDEX SCAN (dba.t_?_su.pk_t_?_su_s_suppkey) (key range: [dba.t_?_su].s_suppkey=av?.av_?, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_?_su] [dba.t_?_su], (select distinct [dba.v_?_rev].supplier_no from (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no, total_revenue) where ([dba.v_?_rev].total_revenue>=(select avg([dba.v_?_rev].total_revenue) from (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no, total_revenue) where ([dba.v_?_rev].supplier_no<=(select count(*)/ cast(? as bigint) from (select [dba.v_?_rev].l_suppkey, sum([dba.v_?_rev].l_price*(?-[dba.v_?_rev].l_disc)) from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no, total_revenue)))))) av? (av_?) where [dba.t_?_su].s_suppkey=av?.av_?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_?_su.pk_t_?_su_s_suppkey), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+S8: no reference in the FROM clause of the statement     
+
+===================================================
+(select count(*) from v_27351_rev)-(select count(distinct supplier_no) from v_27351_rev)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select [dba.v_?_rev].l_suppkey from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey)
+
+  TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select count(*) from (select [dba.v_?_rev].l_suppkey from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no))
+
+  TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select count(distinct [dba.v_?_rev].supplier_no) from (select [dba.v_?_rev].l_suppkey from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no))
+
+  TABLE SCAN (db_root)
+
+  rewritten query: select /*+ PARALLEL(?) */ (select count(*) from (select [dba.v_?_rev].l_suppkey from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no))-(select count(distinct [dba.v_?_rev].supplier_no) from (select [dba.v_?_rev].l_suppkey from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (supplier_no)) from db_root db_root
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+S9: DISTINCT view, every column is kept     
+
+===================================================
+count(*)    
+20     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (a)
+
+  rewritten query: (select distinct a.l_suppkey from [dba.t_?_li] a)
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from (select distinct a.l_suppkey from [dba.t_?_li] a) a (k), (select distinct b.l_suppkey from [dba.t_?_li] b) b (k) where a.k=b.k
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+S10: view defined as a set operation     
+
+===================================================
+count(*)    
+20     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (a)
+
+  rewritten query: select a.l_suppkey from [dba.t_?_li] a
+
+  TABLE SCAN (a)
+
+  rewritten query: select a.s_suppkey from [dba.t_?_su] a
+
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from (select a.l_suppkey from [dba.t_?_li] a union select a.s_suppkey from [dba.t_?_su] a) a (k), (select b.l_suppkey from [dba.t_?_li] b union select b.s_suppkey from [dba.t_?_su] b) b (k) where a.k=b.k
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_?_su), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+S11: a predicate pushed into one of three references, the other two share     
+
+===================================================
+count(*)    sum(c.total_revenue)    
+5     19526400     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (a)
+
+  rewritten query: (select a.l_suppkey, sum(a.l_price*(?-a.l_disc)) from [dba.t_?_li] a where (a.l_shipdate>= ?:?  and a.l_shipdate< ?:? ) group by a.l_suppkey)
+
+  SORT (group by)
+    TABLE SCAN (c)
+
+  rewritten query: (select sum(c.l_price*(?-c.l_disc)), c.l_suppkey from [dba.t_?_li] c where c.l_suppkey= ?:?  and (c.l_shipdate>= ?:?  and c.l_shipdate< ?:? ) group by c.l_suppkey)
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (c)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum(c.total_revenue) from (select a.l_suppkey, sum(a.l_price*(?-a.l_disc)) from [dba.t_?_li] a where (a.l_shipdate>= ?:?  and a.l_shipdate< ?:? ) group by a.l_suppkey) a (supplier_no, total_revenue), (select b.l_suppkey, sum(b.l_price*(?-b.l_disc)) from [dba.t_?_li] b where (b.l_shipdate>= ?:?  and b.l_shipdate< ?:? ) group by b.l_suppkey) b (supplier_no, total_revenue), (select sum(c.l_price*(?-c.l_disc)), c.l_suppkey from [dba.t_?_li] c where c.l_suppkey= ?:?  and (c.l_shipdate>= ?:?  and c.l_shipdate< ?:? ) group by c.l_suppkey) c (total_revenue, supplier_no) where a.supplier_no=b.supplier_no and (a.total_revenue>=c.total_revenue)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+S12: references reading no column of the view     
+
+===================================================
+(select count(*) from v_27351_rev)+(select count(*) from v_27351_rev)    
+40     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select ? from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey)
+
+  TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select count(*) from (select ? from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (?))
+
+  TABLE SCAN (dba.v_?_rev)
+
+  rewritten query: (select count(*) from (select ? from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (?))
+
+  TABLE SCAN (db_root)
+
+  rewritten query: select /*+ PARALLEL(?) */ (select count(*) from (select ? from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (?))+(select count(*) from (select ? from [dba.t_?_li] [dba.v_?_rev] where ([dba.v_?_rev].l_shipdate>= ?:?  and [dba.v_?_rev].l_shipdate< ?:? ) group by [dba.v_?_rev].l_suppkey) [dba.v_?_rev] (?)) from db_root db_root
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+S13: ROWNUM view, whose result is fixed within a statement     
+
+===================================================
+count(*)    
+20     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (a)
+
+  rewritten query: (select a.l_suppkey from [dba.t_?_li] a where (rownum<= ?:? ) group by a.l_suppkey)
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from (select a.l_suppkey from [dba.t_?_li] a where (rownum<= ?:? ) group by a.l_suppkey) a (k), (select b.l_suppkey from [dba.t_?_li] b where (rownum<= ?:? ) group by b.l_suppkey) b (k) where a.k=b.k
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+S14: analytic function in the statement     
+
+===================================================
+supplier_no    r    
+1     20     
+2     18     
+3     15     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (a)
+
+  rewritten query: (select a.l_suppkey, sum(a.l_price*(?-a.l_disc)) from [dba.t_?_li] a where (a.l_shipdate>= ?:?  and a.l_shipdate< ?:? ) group by a.l_suppkey)
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+
+  rewritten query: select /*+ PARALLEL(?) */ a.supplier_no, rank() over (order by ?) from (select a.l_suppkey, sum(a.l_price*(?-a.l_disc)) from [dba.t_?_li] a where (a.l_shipdate>= ?:?  and a.l_shipdate< ?:? ) group by a.l_suppkey) a (supplier_no, total_revenue), (select b.l_suppkey, sum(b.l_price*(?-b.l_disc)) from [dba.t_?_li] b where (b.l_shipdate>= ?:?  and b.l_shipdate< ?:? ) group by b.l_suppkey) b (supplier_no, total_revenue) where a.supplier_no=b.supplier_no order by ? for orderby_num()<= ?:? 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+S15: two views each read twice, two share groups     
+
+===================================================
+count(*)    sum(a.total_revenue)    count(d.k)    
+20     70251570     20     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (a)
+
+  rewritten query: (select a.l_suppkey, sum(a.l_price*(?-a.l_disc)) from [dba.t_?_li] a where (a.l_shipdate>= ?:?  and a.l_shipdate< ?:? ) group by a.l_suppkey)
+
+  SORT (distinct)
+    TABLE SCAN (c)
+
+  rewritten query: (select distinct c.l_suppkey from [dba.t_?_li] c)
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (a)
+        TABLE SCAN (b)
+      TABLE SCAN (c)
+    TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum(a.total_revenue), count(d.k) from (select a.l_suppkey, sum(a.l_price*(?-a.l_disc)) from [dba.t_?_li] a where (a.l_shipdate>= ?:?  and a.l_shipdate< ?:? ) group by a.l_suppkey) a (supplier_no, total_revenue), (select b.l_suppkey, sum(b.l_price*(?-b.l_disc)) from [dba.t_?_li] b where (b.l_shipdate>= ?:?  and b.l_shipdate< ?:? ) group by b.l_suppkey) b (supplier_no, total_revenue), (select distinct c.l_suppkey from [dba.t_?_li] c) c (k), (select distinct d.l_suppkey from [dba.t_?_li] d) d (k) where a.supplier_no=b.supplier_no and b.supplier_no=c.k and c.k=d.k
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+S16: UNION ALL view read by the FROM clause and a WHERE subquery, the shape cbrd_28126 Case 1 had     
+
+===================================================
+count(*)    max(a.k)    
+101     20     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (a)
+
+  rewritten query: select a.l_suppkey from [dba.t_?_li] a
+
+  TABLE SCAN (a)
+
+  rewritten query: select a.s_suppkey from [dba.t_?_su] a
+
+  TABLE SCAN (b)
+
+  rewritten query: (select max(b.k) from (select b.l_suppkey from [dba.t_?_li] b union all select b.s_suppkey from [dba.t_?_su] b) b (k))
+
+  TABLE SCAN (a)
+
+  rewritten query: select count(*), max(a.k) from (select a.l_suppkey from [dba.t_?_li] a union all select a.s_suppkey from [dba.t_?_su] a) a (k) where a.k=(select max(b.k) from (select b.l_suppkey from [dba.t_?_li] b union all select b.s_suppkey from [dba.t_?_su] b) b (k))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_?_su), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+S17: a reference with a pushed predicate leaves the group, the other two share only the columns they read     
+
+===================================================
+count(*)    sum(a.cd)    sum(b.s)    
+20     20     958420     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (a)
+
+  rewritten query: (select count(distinct a.l_disc), a.l_suppkey from [dba.t_?_li] a where a.l_suppkey= ?:?  group by a.l_suppkey)
+
+  SORT (group by)
+    TABLE SCAN (b)
+
+  rewritten query: (select b.l_suppkey, sum(b.l_price) from [dba.t_?_li] b group by b.l_suppkey)
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (a)
+    SORT (temp)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (b)
+        TABLE SCAN (c)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum(a.cd), sum(b.s) from (select count(distinct a.l_disc), a.l_suppkey from [dba.t_?_li] a where a.l_suppkey= ?:?  group by a.l_suppkey) a (cd, k), (select b.l_suppkey, sum(b.l_price) from [dba.t_?_li] b group by b.l_suppkey) b (k, s), (select c.l_suppkey, sum(c.l_price) from [dba.t_?_li] c group by c.l_suppkey) c (k, s) where b.k=c.k
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: false, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+S18: a statement with a WITH clause reads every column of the view, as before the fix     
+
+===================================================
+count(*)    
+5     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_?_su.pk_t_?_su_s_suppkey) (key range: ([dba.t_?_su].s_suppkey< ?:? ), covered: true)
+
+  rewritten query: select [dba.t_?_su].s_suppkey from [dba.t_?_su] [dba.t_?_su] where ([dba.t_?_su].s_suppkey< ?:? )
+
+  SORT (group by)
+    TABLE SCAN (a)
+
+  rewritten query: (select a.l_suppkey, sum(a.l_price), count(distinct a.l_disc) from [dba.t_?_li] a group by a.l_suppkey)
+
+  TABLE SCAN (b)
+
+  rewritten query: (select avg(b.s) from (select b.l_suppkey, sum(b.l_price), count(distinct b.l_disc) from [dba.t_?_li] b group by b.l_suppkey) b (k, s, cd))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: with c(k) as (select [dba.t_?_su].s_suppkey from [dba.t_?_su] [dba.t_?_su] where ([dba.t_?_su].s_suppkey< ?:? ))select /*+ PARALLEL(?) */ count(*) from [dba.c] x, [dba.c] y, (select a.l_suppkey, sum(a.l_price), count(distinct a.l_disc) from [dba.t_?_li] a group by a.l_suppkey) a (k, s, cd) where x.k=y.k and y.k=a.k and (a.s>=(select avg(b.s) from (select b.l_suppkey, sum(b.l_price), count(distinct b.l_disc) from [dba.t_?_li] b group by b.l_suppkey) b (k, s, cd)))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: false, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.t_?_su.pk_t_?_su_s_suppkey), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+S19: a hierarchical statement reads every column of the view, as before the fix     
+
+===================================================
+k    
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+10     
+11     
+12     
+13     
+14     
+15     
+16     
+17     
+18     
+19     
+20     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (a)
+
+  rewritten query: (select a.l_suppkey, sum(a.l_price), count(distinct a.l_disc) from [dba.t_?_li] a group by a.l_suppkey)
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+
+  rewritten query: select /*+ PARALLEL(?) */ a.k from (select a.l_suppkey, sum(a.l_price), count(distinct a.l_disc) from [dba.t_?_li] a group by a.l_suppkey) a (k, s, cd), (select b.l_suppkey, sum(b.l_price), count(distinct b.l_disc) from [dba.t_?_li] b group by b.l_suppkey) b (k, s, cd) where a.k=b.k start with a.k= ?:?  connect by a.k= prior a.k+? order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: false, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

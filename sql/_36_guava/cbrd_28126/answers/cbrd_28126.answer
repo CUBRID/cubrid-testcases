@@ -9,11 +9,19 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
+0
+===================================================
 2
 ===================================================
 2
 ===================================================
 3
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -410,24 +418,24 @@ Query Plan:
 
   rewritten query: select [dba.t_mix].col_a from [dba.t_mix] [dba.t_mix]
 
-  TABLE SCAN (dba.v_both)
+  TABLE SCAN (dba.v_both?)
 
-  rewritten query: select [dba.v_both].col_a from [dba.t_lo] [dba.v_both]
+  rewritten query: select [dba.v_both?].col_a from [dba.t_lo] [dba.v_both?]
 
-  TABLE SCAN (dba.v_both)
+  TABLE SCAN (dba.v_both?)
 
-  rewritten query: select [dba.v_both].col_a from [dba.t_hi] [dba.v_both]
+  rewritten query: select [dba.v_both?].col_a from [dba.t_hi] [dba.v_both?]
 
-  TABLE SCAN (dba.v_both)
+  TABLE SCAN (dba.v_both?)
 
-  rewritten query: select [dba.v_both].col_a from (select [dba.v_both].col_a from [dba.t_lo] [dba.v_both] union all select [dba.v_both].col_a from [dba.t_hi] [dba.v_both]) [dba.v_both] (col_a)
+  rewritten query: select [dba.v_both?].col_a from (select [dba.v_both?].col_a from [dba.t_lo] [dba.v_both?] union all select [dba.v_both?].col_a from [dba.t_hi] [dba.v_both?]) [dba.v_both?] (col_a)
 
   SORT (order by)
     NESTED LOOPS (inner join)
       TABLE SCAN (x)
       TABLE SCAN (y)
 
-  rewritten query: select x.col_a, y.col_a from (select [dba.v_both].col_a from (select [dba.v_both].col_a from [dba.t_lo] [dba.v_both] union all select [dba.v_both].col_a from [dba.t_hi] [dba.v_both]) [dba.v_both] (col_a) union all select [dba.t_mix].col_a from [dba.t_mix] [dba.t_mix]) x (col_a), (select [dba.t_mix].col_a from [dba.t_mix] [dba.t_mix] union all select [dba.v_both].col_a from (select [dba.v_both].col_a from [dba.t_lo] [dba.v_both] union all select [dba.v_both].col_a from [dba.t_hi] [dba.v_both]) [dba.v_both] (col_a)) y (col_a) where x.col_a=y.col_a order by ?, ?
+  rewritten query: select x.col_a, y.col_a from (select [dba.v_both].col_a from (select [dba.v_both].col_a from [dba.t_lo] [dba.v_both] union all select [dba.v_both].col_a from [dba.t_hi] [dba.v_both]) [dba.v_both] (col_a) union all select [dba.t_mix].col_a from [dba.t_mix] [dba.t_mix]) x (col_a), (select [dba.t_mix].col_a from [dba.t_mix] [dba.t_mix] union all select [dba.v_both?].col_a from (select [dba.v_both?].col_a from [dba.t_lo] [dba.v_both?] union all select [dba.v_both?].col_a from [dba.t_hi] [dba.v_both?]) [dba.v_both?] (col_a)) y (col_a) where x.col_a=y.col_a order by ?, ?
 
 
 Trace Statistics:
@@ -857,6 +865,10 @@ k    n    cnt
 8     10000     10     
 9     10000     10     
 
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================
